@@ -5,9 +5,9 @@ import { pool } from "../src/db.js";
 const [nome, email, papel] = process.argv.slice(2);
 
 if (!nome || !email || !papel) {
-  console.log('Uso: node scripts/criar-admin.js "Nome" email papel');
+  console.log('Uso: node scripts/criar_admin.js "Nome" email papel');
   console.log(
-    'Exemplo: node scripts/criar-admin.js "Luana Souza" luana@ufc.br professor',
+    'Exemplo: node scripts/criar_admin.js "Luana Souza" luana@ufc.br professor',
   );
   process.exit(1);
 }
