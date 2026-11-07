@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang= "pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <title> Alterar Senha</title>
+    </head>
+    <body>
+        <form id="formulario-senha">    
+            <label> Senha Atual:
+                <input type="password" name="senhaAtual" required>
+            </label>
+            <label> Nova Senha:
+                <input type="password" name="novaSenha" required minlength="8" maxlength="64">
+            </label>
+            <label> Confirmar Nova Senha:
+                <input type="password" name="confirmarNovaSenha" required>
+            </label>
+            <button type="submit">Salvar nova senha</button>
+        </form>
+        <p id="error-message" style="color: red" aria-live="polite"></p>
+
+        <a href="/admin.html">Voltar para o perfil</a>
+
+        <script src="/senha.js"></script>
+</html>>
