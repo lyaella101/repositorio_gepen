@@ -1,5 +1,5 @@
-const formulario = document.getElementById("formulario-senha");
-const mensagemErro = document.getElementById("error-message");
+const formulario = document.getElementById("formulario_senha");
+const mensagemErro = document.getElementById("error_message");
 
 formulario.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -16,6 +16,11 @@ formulario.addEventListener("submit", async (event) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ senhaAtual, novaSenha, confirmarNovaSenha }),
     });
+
+    if (resposta.status === 401) {
+      window.location.href = "/login.html";
+      return;
+    }
 
     const dados = await resposta.json();
 
