@@ -1,4 +1,4 @@
-function urlValida(texto) {
+export function urlValida(texto) {
   try {
     const url = new URL(texto);
     return url.protocol === "http:" || url.protocol === "https:";
@@ -7,7 +7,7 @@ function urlValida(texto) {
   }
 }
 // Pras imagens
-function urlHttpsValida(texto) {
+export function urlHttpsValida(texto) {
   try {
     return new URL(texto).protocol === "https:";
   } catch {

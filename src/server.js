@@ -5,7 +5,7 @@ import { pool } from "./db.js";
 import { requireAuth } from "./middlewares/requireAuth.js";
 import authRouter from "./routes/auth.js";
 import opcoesRouter from "./routes/opcoes.js";
-
+import cardsRouter from "./routes/cards.js";
 
 const app = express();
 
@@ -36,6 +36,7 @@ app.use("/admin", requireAuth);
 
 app.use(authRouter);
 app.use(opcoesRouter);
+app.use(cardsRouter);
 
 const PORTA = process.env.PORT || 3000;
 app.listen(PORTA, () => {
