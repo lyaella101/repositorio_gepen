@@ -11,6 +11,64 @@ function idValido(valor) {
   return Number.isInteger(valor) && valor >= 1;
 }
 
+function validarCard(dados) {
+  const {
+    titulo,
+    url,
+    descricao,
+    tipoId,
+    categoriaId,
+    nivelId,
+    idioma,
+    imagemUrl,
+    tags,
+  } = dados;
+  if (
+    !titulo ||
+    !titulo.trim() ||
+    !url ||
+    !descricao ||
+    !descricao.trim() ||
+    !tipoId ||
+    !categoriaId ||
+    !nivelId ||
+    !idioma ||
+    !tags
+  ) {
+    return "Preencha todos os campos obrigatórios";
+  }
+
+  if (titulo.trim().length > 200) {
+    return "O título deve ter no máximo 200 caracteres";
+  }
+
+  if (url.length > 2048 || !urlValida(url)) {
+    return "URL inválida. Use um endereço começando com http:// ou https://";
+  }
+
+  if (!idValido(tipoId) || !idValido(categoriaId) || !idValido(nivelId)) {
+    return "Tipo, categoria ou nível inválido";
+  }
+
+  if (!IDIOMAS.includes(idioma)) {
+    return "Escolha um idioma válido";
+  }
+
+  if (imagemUrl && (imagemUrl.length > 2048 || !urlHttpsValida(imagemUrl))) {
+    return "A URL da imagem precisa começar com https://";
+  }
+
+  if (!Array.isArray(tags) || tags.length < 1 || tags.length > MAXIMO_TAGS) {
+    return `Escolha de 1 a ${MAXIMO_TAGS} tags`;
+  }
+
+  if (!tags.every(idValido)) {
+    return "Tags inválidas";
+  }
+
+  return null;
+}
+
 router.post("/admin/cards", async (req, res) => {
   const {
     titulo,
@@ -25,57 +83,10 @@ router.post("/admin/cards", async (req, res) => {
     tags,
   } = req.body;
 
-  if (
-    !titulo ||
-    !titulo.trim() ||
-    !url ||
-    !descricao ||
-    !descricao.trim() ||
-    !tipoId ||
-    !categoriaId ||
-    !nivelId ||
-    !idioma ||
-    !tags
-  ) {
-    return res
-      .status(400)
-      .json({ error: "Preencha todos os campos obrigatórios" });
-  }
+  const erro = validarCard(req.body);
 
-  if (titulo.trim().length > 200) {
-    return res
-      .status(400)
-      .json({ error: "O título deve ter no máximo 200 caracteres" });
-  }
-
-  if (url.length > 2048 || !urlValida(url)) {
-    return res.status(400).json({
-      error: "URL inválida. Use um endereço começando com http:// ou https://",
-    });
-  }
-
-  if (!idValido(tipoId) || !idValido(categoriaId) || !idValido(nivelId)) {
-    return res.status(400).json({ error: "Tipo, categoria ou nível inválido" });
-  }
-
-  if (!IDIOMAS.includes(idioma)) {
-    return res.status(400).json({ error: "Escolha um idioma válido" });
-  }
-
-  if (imagemUrl && (imagemUrl.length > 2048 || !urlHttpsValida(imagemUrl))) {
-    return res
-      .status(400)
-      .json({ error: "A URL da imagem precisa começar com https://" });
-  }
-
-  if (!Array.isArray(tags) || tags.length < 1 || tags.length > MAXIMO_TAGS) {
-    return res
-      .status(400)
-      .json({ error: `Escolha de 1 a ${MAXIMO_TAGS} tags` });
-  }
-
-  if (!tags.every(idValido)) {
-    return res.status(400).json({ error: "Tags inválidas" });
+  if (erro) {
+    return res.status(400).json({ error: erro });
   }
 
   const tagsSemRepeticao = [...new Set(tags)];
@@ -204,6 +215,106 @@ router.delete("/admin/cards/:id", async (req, res) => {
   } catch (error) {
     console.error("Erro ao excluir recomendação", error);
     res.status(500).json({ error: "Erro ao excluir recomendação" });
+  }
+});
+
+router.put("/admin/cards/:id", async (req, res) => {
+  const cardId = Number(req.params.id);
+
+  if (!idValido(cardId)) {
+    return res.status(400).json({ error: "Recomendação inválida" });
+  }
+
+  const erro = validarCard(req.body);
+
+  if (erro) {
+    return res.status(400).json({ error: erro });
+  }
+
+  const {
+    titulo,
+    url,
+    descricao,
+    tipoId,
+    categoriaId,
+    nivelId,
+    idioma,
+    observacoes,
+    imagemUrl,
+    tags,
+  } = req.body;
+
+  const tagsSemRepeticao = [...new Set(tags)];
+
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    const conferencia = await client.query(
+      "SELECT COUNT(*) AS total FROM tag WHERE id = ANY($1) AND categoria_id = $2",
+      [tagsSemRepeticao, categoriaId],
+    );
+    if (Number(conferencia.rows[0].total) !== tagsSemRepeticao.length) {
+      await client.query("ROLLBACK");
+      return res
+        .status(400)
+        .json({ error: "Escolha tags da categoria selecionada" });
+    }
+
+    const resultado = await client.query(
+      `UPDATE card SET
+         tipo_id = $1, categoria_id = $2, nivel_id = $3, titulo = $4, url = $5,
+         descricao = $6, idioma = $7, observacoes = $8, imagem_url = $9,
+         atualizado_em = NOW()
+       WHERE id = $10`,
+      [
+        tipoId,
+        categoriaId,
+        nivelId,
+        titulo.trim(),
+        url.trim(),
+        descricao.trim(),
+        idioma,
+        observacoes?.trim() || null,
+        imagemUrl || null,
+        cardId,
+      ],
+    );
+
+    if (resultado.rowCount === 0) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ error: "Recomendação não encontrada" });
+    }
+
+    await client.query("DELETE FROM card_tag WHERE card_id = $1", [cardId]);
+
+    for (const tagId of tagsSemRepeticao) {
+      await client.query(
+        "INSERT INTO card_tag (card_id, tag_id) VALUES ($1, $2)",
+        [cardId, tagId],
+      );
+    }
+
+    await client.query("COMMIT");
+    res.json({ message: "Recomendação atualizada com sucesso" });
+  } catch (error) {
+    await client.query("ROLLBACK");
+
+    if (error.code === "23503") {
+      return res
+        .status(400)
+        .json({ error: "Tipo, categoria ou nível inválido" });
+    }
+    if (error.code === "23514") {
+      return res
+        .status(400)
+        .json({ error: "Dados inválidos. Confira os campos." });
+    }
+
+    console.error("Erro ao atualizar recomendação:", error);
+    res.status(500).json({ error: "Erro ao atualizar recomendação" });
+  } finally {
+    client.release();
   }
 });
 
