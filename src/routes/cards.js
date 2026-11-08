@@ -153,4 +153,58 @@ router.post("/admin/cards", async (req, res) => {
   }
 });
 
+router.get("/cards", async (req, res) => {
+  try {
+    const resultado = await pool.query(`SELECT 
+c.id,
+c.titulo,
+c.url,
+c.descricao,
+c.idioma,
+c.observacoes,
+c.imagem_url,
+c.data_envio,
+tp.nome AS tipo,
+cat.nome AS categoria,
+n.nome AS nivel,
+  ( SELECT COALESCE(json_agg(json_build_object('id', t.id, 'nome', t.nome) ORDER BY t.nome), '[]')
+    FROM card_tag ct, tag t
+    WHERE ct.card_id = c.id
+      AND t.id = ct.tag_id
+  ) AS tags
+FROM card AS c, tipo AS tp, categoria as cat, nivel AS n
+WHERE tp.id  = c.tipo_id
+  AND cat.id = c.categoria_id
+  AND n.id   = c.nivel_id
+ORDER BY c.data_envio DESC`);
+
+    res.json(resultado.rows);
+  } catch (error) {
+    console.error("Erro ao listar as recomendações", error);
+    res.status(500).json({ error: "Erro ao listar as recomendações" });
+  }
+});
+
+router.delete("/admin/cards/:id", async (req, res) => {
+  const cardId = Number(req.params.id);
+
+  if (!idValido(cardId)) {
+    return res.status(400).json({ error: "Recomendação inválida" });
+  }
+
+  try {
+    const resultado = await pool.query("DELETE FROM card WHERE id = $1", [
+      cardId,
+    ]);
+
+    if (resultado.rowCount === 0) {
+      return res.status(404).json({ error: "Recomendação não foi encontrada" });
+    }
+    res.json({ message: "Recomendação excluída com sucesso" });
+  } catch (error) {
+    console.error("Erro ao excluir recomendação", error);
+    res.status(500).json({ error: "Erro ao excluir recomendação" });
+  }
+});
+
 export default router;
