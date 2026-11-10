@@ -14,6 +14,30 @@
       <button type="submit">Logout</button>
     </form>
 
+    <h1>Painel Administrativo</h1>
+    <p>Gerencie as recomendações deste catálogo</p>
+
+    <a href="/novo_card.html">Criar recomendação</a>
+
+    <p id="mensagem" aria-live="polite"></p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Recomendação</th>
+          <th>Classificação</th>
+          <th>Tags</th>
+          <th>Publicada em</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tabela_cards">
+        <tr>
+          <td colspan="4">Carregando...</td>
+        </tr>
+      </tbody>
+    </table>
+
     <script src="/admin.js"></script>
   </body>
 </html>
