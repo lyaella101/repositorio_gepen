@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Gerenciar contas</title>
+  </head>
+  <body>
+    <a href="/admin.html">Voltar ao painel</a>
+    <h1>Gerenciar contas</h1>
+
+    <p id="mensagem" aria-live="polite">Carregando...</p>
+
+    <section id="area_contas" hidden>
+      <h2>Nova conta</h2>
+      <form id="formulario_conta">
+        <label
+          >Nome *
+          <input type="text" name="nome" required maxlength="100" />
+        </label>
+
+        <label
+          >E-mail *
+          <input type="email" name="email" required maxlength="255" />
+        </label>
+
+        <label
+          >Papel *
+          <select name="papel" required>
+            <option value="bolsista">Bolsista</option>
+            <option value="professor">Professor</option>
+          </select>
+        </label>
+
+        <button type="submit">Criar conta</button>
+      </form>
+
+      <div id="senha_criada" hidden>
+        <p><strong>Senha provisória:</strong> <code id="senha_valor"></code></p>
+        <p>
+          Anote e entregue por um canal seguro. Ela não será mostrada de novo.
+        </p>
+      </div>
+
+      <h2>Contas</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Papel</th>
+            <th>Situação</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tabela_contas"></tbody>
+      </table>
+    </section>
+
+    <script src="/contas.js"></script>
+  </body>
+</html>

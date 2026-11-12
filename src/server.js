@@ -3,9 +3,11 @@ import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import { pool } from "./db.js";
 import { requireAuth } from "./middlewares/requireAuth.js";
+import { requireProfessor } from "./middlewares/requireProfessor.js";
 import authRouter from "./routes/auth.js";
 import opcoesRouter from "./routes/opcoes.js";
 import cardsRouter from "./routes/cards.js";
+import contasRouter from "./routes/contas.js";
 
 const app = express();
 
@@ -33,10 +35,12 @@ app.use(
 );
 
 app.use("/admin", requireAuth);
+app.use("/admin/contas", requireProfessor);
 
 app.use(authRouter);
 app.use(opcoesRouter);
 app.use(cardsRouter);
+app.use(contasRouter);
 
 const PORTA = process.env.PORT || 3000;
 app.listen(PORTA, () => {

@@ -13,6 +13,10 @@ async function verificarSessao() {
 
     const dados = await resposta.json();
     nomeUsuario.textContent = dados.nome;
+
+    if (dados.papel === "professor") {
+      document.getElementById("link_contas").hidden = false;
+    }
   } catch (error) {
     console.error("Erro ao verificar sessão:", error);
     nomeUsuario.textContent = "(não foi possível carregar)";
