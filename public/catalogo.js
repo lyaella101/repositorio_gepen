@@ -1,6 +1,13 @@
 const listaCards = document.getElementById("lista_cards");
 const contagem = document.getElementById("contagem");
 const campoBusca = document.getElementById("busca");
+const filtros = document.getElementById("filtros");
+const filtroTipo = document.getElementById("filtro_tipo");
+const filtroCategoria = document.getElementById("filtro_categoria");
+const filtroNivel = document.getElementById("filtro_nivel");
+const filtroTags = document.getElementById("filtro_tags");
+const botaoLimpar = document.getElementById("limpar_filtros");
+
 let todosOsCards = [];
 
 async function carregarCatalogo() {
@@ -76,6 +83,18 @@ function criarCard(card) {
   return bloco;
 }
 
+async function preencherLista(campo, endereco) {
+  const resposta = await fetch(endereco);
+  const itens = await resposta.json();
+
+  for (const item of itens) {
+    const opcao = document.createElement("option");
+    opcao.value = item.id;
+    opcao.textContent = item.nome;
+    campo.appendChild(opcao);
+  }
+}
+
 function semAcentos(texto) {
   return texto
     .normalize("NFD")
@@ -83,16 +102,74 @@ function semAcentos(texto) {
     .toLowerCase();
 }
 
-function buscar() {
+function aplicarFiltros() {
   const termo = semAcentos(campoBusca.value.trim());
+  const tipoId = Number(filtros.tipoId.value);
+  const categoriaId = Number(filtros.categoriaId.value);
+  const nivelId = Number(filtros.nivelId.value);
+  const idioma = filtros.idioma.value;
+  const tagsMarcadas = [
+    ...filtros.querySelectorAll('input[name="tags"]:checked'),
+  ].map((caixa) => Number(caixa.value));
 
-  const encontrados = todosOsCards.filter((card) =>
-    semAcentos(card.titulo).includes(termo),
+  const visiveis = todosOsCards.filter(
+    (card) =>
+      semAcentos(card.titulo).includes(termo) &&
+      (!tipoId || card.tipo_id === tipoId) &&
+      (!categoriaId || card.categoria_id === categoriaId) &&
+      (!nivelId || card.nivel_id === nivelId) &&
+      (!idioma || card.idioma === idioma) &&
+      (tagsMarcadas.length === 0 ||
+        tagsMarcadas.every((id) => card.tags.some((tag) => tag.id === id))),
   );
-
-  mostrarCards(encontrados);
+  mostrarCards(visiveis);
 }
 
-campoBusca.addEventListener("input", buscar);
+campoBusca.addEventListener("input", aplicarFiltros);
+filtros.addEventListener("input", aplicarFiltros);
 
-carregarCatalogo();
+async function carregarTagsDoFiltro(categoriaId) {
+  filtroTags.textContent = "";
+
+  if (!categoriaId) {
+    filtroTags.textContent = "Escolha uma categoria para ver as tags dela.";
+    return;
+  }
+
+  const resposta = await fetch(`/categorias/${categoriaId}/tags`);
+  const tags = await resposta.json();
+
+  for (const tag of tags) {
+    const rotulo = document.createElement("label");
+    const caixa = document.createElement("input");
+    caixa.type = "checkbox";
+    caixa.name = "tags";
+    caixa.value = tag.id;
+    rotulo.appendChild(caixa);
+    rotulo.append(" " + tag.nome);
+    filtroTags.appendChild(rotulo);
+  }
+}
+
+filtroCategoria.addEventListener("change", async () => {
+  await carregarTagsDoFiltro(filtroCategoria.value);
+  aplicarFiltros();
+});
+
+botaoLimpar.addEventListener("click", () => {
+  filtros.reset();
+  campoBusca.value = "";
+  carregarTagsDoFiltro("");
+  mostrarCards(todosOsCards);
+});
+
+async function iniciar() {
+  await Promise.all([
+    preencherLista(filtroTipo, "/tipos"),
+    preencherLista(filtroCategoria, "/categorias"),
+    preencherLista(filtroNivel, "/niveis"),
+  ]);
+  await carregarCatalogo();
+}
+
+iniciar();

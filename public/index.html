@@ -8,11 +8,55 @@
     <h1>Catálogo de recomendações</h1>
     <p>Materiais de língua e cultura japonesa indicados pela GEPEN</p>
 
-   <label> Buscar por título
-    <input type="search" id="busca" placeholder="Partículas">
-   </label>
+    <label>
+      Buscar por título
+      <input type="search" id="busca" placeholder="Partículas" />
+    </label>
 
     <p id="contagem"></p>
+
+    <form id="filtros">
+      <h2>Filtros</h2>
+
+      <label
+        >Tipo de material
+        <select name="tipoId" id="filtro_tipo">
+          <option value="">Todos</option>
+        </select>
+      </label>
+
+      <label
+        >Categoria
+        <select name="categoriaId" id="filtro_categoria">
+          <option value="">Todas</option>
+        </select>
+      </label>
+
+      <fieldset>
+        <legend>Tags</legend>
+        <div id="filtro_tags">Escolha uma categoria para ver as tags dela.</div>
+      </fieldset>
+
+      <label
+        >Nível de aprendizado
+        <select name="nivelId" id="filtro_nivel">
+          <option value="">Todos</option>
+        </select>
+      </label>
+
+      <label
+        >Idioma do material
+        <select name="idioma">
+          <option value="">Todos</option>
+          <option>Japonês</option>
+          <option>Português</option>
+          <option>Inglês</option>
+          <option>Outro</option>
+        </select>
+      </label>
+
+      <button type="button" id="limpar_filtros">Limpar filtros</button>
+    </form>
 
     <div id="lista_cards">Carregando...</div>
 
