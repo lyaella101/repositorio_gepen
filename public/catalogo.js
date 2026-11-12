@@ -1,26 +1,35 @@
 const listaCards = document.getElementById("lista_cards");
 const contagem = document.getElementById("contagem");
+const campoBusca = document.getElementById("busca");
+let todosOsCards = [];
 
 async function carregarCatalogo() {
   try {
     const resposta = await fetch("/cards");
-    const cards = await resposta.json();
-
-    listaCards.textContent = "";
-
-    if (cards.length === 0) {
-      listaCards.textContent = "Nenhuma recomendação cadastrada ainda.";
-      return;
-    }
-
-    contagem.textContent = `${cards.length} recomendações - mais recentes primeiro`;
-
-    for (const card of cards) {
-      listaCards.appendChild(criarCard(card));
-    }
+    todosOsCards = await resposta.json();
+    mostrarCards(todosOsCards);
   } catch (error) {
     listaCards.textContent =
-      "Não foi possível carregar o catálogo. Tente novamente";
+      "Não foi possível carregar o catálogo. Tente novamente.";
+  }
+}
+
+function mostrarCards(cards) {
+  listaCards.textContent = "";
+
+  if (cards.length === 0) {
+    contagem.textContent = "";
+    listaCards.textContent =
+      todosOsCards.length === 0
+        ? "Nenhuma recomendação cadastrada ainda."
+        : "Nenhuma recomendação encontrada.";
+    return;
+  }
+
+  contagem.textContent = `${cards.length} recomendações (Mais recente)`;
+
+  for (const card of cards) {
+    listaCards.appendChild(criarCard(card));
   }
 }
 
@@ -66,5 +75,24 @@ function criarCard(card) {
 
   return bloco;
 }
+
+function semAcentos(texto) {
+  return texto
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function buscar() {
+  const termo = semAcentos(campoBusca.value.trim());
+
+  const encontrados = todosOsCards.filter((card) =>
+    semAcentos(card.titulo).includes(termo),
+  );
+
+  mostrarCards(encontrados);
+}
+
+campoBusca.addEventListener("input", buscar);
 
 carregarCatalogo();
