@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -7,9 +7,9 @@
   <body>
     <a href="/admin.html">Voltar</a>
     <h1>Editar recomendação</h1>
-    <p>* campos obrigatórios</p>
 
-    <form id="formulario_card">
+    <form id="formulario_card" hidden>
+      <p>* campos obrigatórios</p>
       <label>
         Título *
         <input type="text" name="titulo" required maxlength="200" />
@@ -84,10 +84,10 @@
       </label>
 
       <button type="submit">Salvar recomendações</button>
-
-      <p id="mensagem" aria-live="polite"></p>
-
-      <script src="/editar_card.js"></script>
     </form>
+
+    <p id="mensagem" aria-live="polite"></p>
+
+    <script src="/editar_card.js"></script>
   </body>
 </html>
