@@ -58,7 +58,6 @@ CREATE TABLE card (
     url VARCHAR(2048) NOT NULL CHECK (url ~* '^https?://[^\s]+$'),
     idioma VARCHAR(20) NOT NULL CHECK (idioma IN ('Japonês','Português', 'Inglês', 'Outro')),
     observacoes TEXT,
-    imagem_url  VARCHAR(2048) CHECK (imagem_url IS NULL OR imagem_url ~* '^https://[^\s]+$'),
     data_envio TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     atualizado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

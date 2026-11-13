@@ -5,80 +5,84 @@
     <title>Area Administrativa</title>
   </head>
   <body>
-    <h1>Area Administrativa</h1>
-    <p>Olá, <span id="nome_usuario"></span></p>
+    <p id="aviso_sessao"></p>
 
-    <a href="/senha.html">Alterar senha</a>
-    <a href="/contas.html" id="link_contas" hidden>Gerenciar Contas</a>
+    <main id="conteudo" hidden>
+      <h1>Area Administrativa</h1>
+      <p>Olá, <span id="nome_usuario"></span></p>
 
-    <form method="POST" action="/logout">
-      <button type="submit">Logout</button>
-    </form>
+      <a href="/senha.html">Alterar senha</a>
+      <a href="/contas.html" id="link_contas" hidden>Gerenciar Contas</a>
 
-    <h1>Painel Administrativo</h1>
-    <p>Gerencie as recomendações deste catálogo</p>
+      <form method="POST" action="/logout">
+        <button type="submit">Logout</button>
+      </form>
 
-    <a href="/novo_card.html">Criar recomendação</a>
+      <h1>Painel Administrativo</h1>
+      <p>Gerencie as recomendações deste Repositório</p>
 
-    <p id="mensagem" aria-live="polite"></p>
+      <a href="/novo_card.html">Criar recomendação</a>
 
-    <form id="filtros">
-      <label
-        >Buscar pelo título
-        <input type="search" id="busca" placeholder="Ex.: kanji" />
-      </label>
+      <p id="mensagem" aria-live="polite"></p>
 
-      <label
-        >Tipo
-        <select id="filtro_tipo">
-          <option value="">Todos</option>
-        </select>
-      </label>
+      <form id="filtros">
+        <label
+          >Buscar pelo título
+          <input type="search" id="busca" placeholder="Ex.: kanji" />
+        </label>
 
-      <label
-        >Categoria
-        <select id="filtro_categoria">
-          <option value="">Todas</option>
-        </select>
-      </label>
+        <label
+          >Tipo
+          <select id="filtro_tipo">
+            <option value="">Todos</option>
+          </select>
+        </label>
 
-      <label
-        >Nível
-        <select id="filtro_nivel">
-          <option value="">Todos</option>
-        </select>
-      </label>
+        <label
+          >Categoria
+          <select id="filtro_categoria">
+            <option value="">Todas</option>
+          </select>
+        </label>
 
-      <label
-        >Idioma
-        <select id="filtro_idioma">
-          <option value="">Todos</option>
-          <option value="Japonês">Japonês</option>
-          <option value="Português">Português</option>
-          <option value="Inglês">Inglês</option>
-          <option value="Outro">Outro</option>
-        </select>
-      </label>
+        <label
+          >Nível
+          <select id="filtro_nivel">
+            <option value="">Todos</option>
+          </select>
+        </label>
 
-      <button type="button" id="limpar_filtros">Limpar</button>
-    </form>
+        <label
+          >Idioma
+          <select id="filtro_idioma">
+            <option value="">Todos</option>
+            <option value="Japonês">Japonês</option>
+            <option value="Português">Português</option>
+            <option value="Inglês">Inglês</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </label>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Recomendação</th>
-          <th>Classificação</th>
-          <th>Tags</th>
-          <th>Publicada em</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody id="tabela_cards">
-        <tr>
-          <td colspan="4">Carregando...</td>
-        </tr>
-      </tbody>
-    </table>
+        <button type="button" id="limpar_filtros">Limpar</button>
+      </form>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Recomendação</th>
+            <th>Classificação</th>
+            <th>Tags</th>
+            <th>Publicada em</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tabela_cards">
+          <tr>
+            <td colspan="4">Carregando...</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
 
     <script src="/admin.js"></script>
   </body>

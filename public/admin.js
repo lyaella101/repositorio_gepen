@@ -8,6 +8,8 @@ const filtroCategoria = document.getElementById("filtro_categoria");
 const filtroNivel = document.getElementById("filtro_nivel");
 const filtroIdioma = document.getElementById("filtro_idioma");
 const botaoLimpar = document.getElementById("limpar_filtros");
+const conteudo = document.getElementById("conteudo");
+const avisoSessao = document.getElementById("aviso_sessao");
 
 let todosOsCards = [];
 
@@ -17,7 +19,11 @@ async function verificarSessao() {
 
     if (resposta.status === 401) {
       window.location.href = "/login.html";
-      return;
+      return false;                                  // 1
+    }
+
+    if (!resposta.ok) {                              // 2
+      throw new Error("Resposta inesperada: " + resposta.status);
     }
 
     const dados = await resposta.json();
@@ -26,9 +32,13 @@ async function verificarSessao() {
     if (dados.papel === "professor") {
       document.getElementById("link_contas").hidden = false;
     }
+
+    conteudo.hidden = false;                         // 3
+    return true;
   } catch (error) {
     console.error("Erro ao verificar sessão:", error);
-    nomeUsuario.textContent = "(não foi possível carregar)";
+    avisoSessao.textContent = "Não foi possível carregar o painel. Tente recarregar a página.";
+    return false;
   }
 }
 
@@ -180,7 +190,8 @@ botaoLimpar.addEventListener("click", () => {
 });
 
 async function iniciar() {
-  await verificarSessao();
+  const logado = await verificarSessao();
+  if(!logado) return;
 
   try {
     await Promise.all([
