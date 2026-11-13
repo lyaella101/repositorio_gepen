@@ -22,10 +22,46 @@
 
     <p id="mensagem" aria-live="polite"></p>
 
-    <label
-      >Buscar pelo título
-      <input type="search" id="busca" placeholder="Ex.: kanji" />
-    </label>
+    <form id="filtros">
+      <label
+        >Buscar pelo título
+        <input type="search" id="busca" placeholder="Ex.: kanji" />
+      </label>
+
+      <label
+        >Tipo
+        <select id="filtro_tipo">
+          <option value="">Todos</option>
+        </select>
+      </label>
+
+      <label
+        >Categoria
+        <select id="filtro_categoria">
+          <option value="">Todas</option>
+        </select>
+      </label>
+
+      <label
+        >Nível
+        <select id="filtro_nivel">
+          <option value="">Todos</option>
+        </select>
+      </label>
+
+      <label
+        >Idioma
+        <select id="filtro_idioma">
+          <option value="">Todos</option>
+          <option value="Japonês">Japonês</option>
+          <option value="Português">Português</option>
+          <option value="Inglês">Inglês</option>
+          <option value="Outro">Outro</option>
+        </select>
+      </label>
+
+      <button type="button" id="limpar_filtros">Limpar</button>
+    </form>
 
     <table>
       <thead>

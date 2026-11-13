@@ -2,6 +2,12 @@ const nomeUsuario = document.getElementById("nome_usuario");
 const tabelaCards = document.getElementById("tabela_cards");
 const mensagem = document.getElementById("mensagem");
 const campoBusca = document.getElementById("busca");
+const formFiltros = document.getElementById("filtros");
+const filtroTipo = document.getElementById("filtro_tipo");
+const filtroCategoria = document.getElementById("filtro_categoria");
+const filtroNivel = document.getElementById("filtro_nivel");
+const filtroIdioma = document.getElementById("filtro_idioma");
+const botaoLimpar = document.getElementById("limpar_filtros");
 
 let todosOsCards = [];
 
@@ -63,15 +69,36 @@ function semAcentos(texto) {
     .toLowerCase();
 }
 
-function buscar() {
+function aplicarFiltros() {
   const termo = semAcentos(campoBusca.value.trim());
-  const encontrados = todosOsCards.filter((card) =>
-    semAcentos(card.titulo).includes(termo),
+  const tipo = filtroTipo.value;
+  const categoria = filtroCategoria.value;
+  const nivel = filtroNivel.value;
+  const idioma = filtroIdioma.value;
+
+  const encontrados = todosOsCards.filter(
+    (card) =>
+      semAcentos(card.titulo).includes(termo) &&
+      (tipo === "" || card.tipo_id === Number(tipo)) &&
+      (categoria === "" || card.categoria_id === Number(categoria)) &&
+      (nivel === "" || card.nivel_id === Number(nivel)) &&
+      (idioma === "" || card.idioma === idioma),
   );
+
   mostrarTabela(encontrados);
 }
 
-campoBusca.addEventListener("input", buscar);
+async function preencherLista(endereco, select) {
+  const resposta = await fetch(endereco);
+  const itens = await resposta.json();
+
+  for (const item of itens) {
+    const opcao = document.createElement("option");
+    opcao.value = item.id;
+    opcao.textContent = item.nome;
+    select.appendChild(opcao);
+  }
+}
 
 function criarLinha(card) {
   const linha = document.createElement("tr");
@@ -84,7 +111,7 @@ function criarLinha(card) {
   linkMaterial.rel = "noopener noreferrer";
   celulaTitulo.appendChild(linkMaterial);
 
-  linha.insertCell().textContent = `${card.titulo} · ${card.categoria} · ${card.nivel}`;
+  linha.insertCell().textContent = `${card.titulo} · ${card.tipo} · ${card.categoria} · ${card.nivel}`;
   linha.insertCell().textContent = `${card.tags.map((tag) => tag.nome).join(", ")}`;
   linha.insertCell().textContent = new Date(card.data_envio).toLocaleDateString(
     "pt-BR",
@@ -140,4 +167,32 @@ async function excluirCard(card, linha) {
   }
 }
 
-verificarSessao().then(carregarTabela);
+campoBusca.addEventListener("input", aplicarFiltros);
+formFiltros.addEventListener("change", aplicarFiltros);
+
+formFiltros.addEventListener("submit", (evento) => {
+  evento.preventDefault();
+});
+
+botaoLimpar.addEventListener("click", () => {
+  formFiltros.reset();
+  aplicarFiltros();
+});
+
+async function iniciar() {
+  await verificarSessao();
+
+  try {
+    await Promise.all([
+      preencherLista("/tipos", filtroTipo),
+      preencherLista("/categorias", filtroCategoria),
+      preencherLista("/niveis", filtroNivel),
+    ]);
+  } catch (error) {
+    mensagem.textContent = "Não foi possível carregar os filtros.";
+  }
+
+  carregarTabela();
+}
+
+iniciar();
