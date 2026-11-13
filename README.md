@@ -220,7 +220,6 @@ Cada página de `public/` segue esse mesmo padrão: um `.html` com a tela e um
 
 | Decisão                                        | Motivo                                                    |
 | ---------------------------------------------- | --------------------------------------------------------- |
-| JavaScript em vez de TypeScript                | Equipe mais familiarizada; projeto pequeno                |
 | Sessão com cookie em vez de JWT                | O logout precisa invalidar a sessão de verdade            |
 | SQL direto, sem ORM                            | Controle total das consultas e do schema                  |
 | Tabela `administrador` com papel               | Permite professores e bolsistas com permissões diferentes |
@@ -228,7 +227,7 @@ Cada página de `public/` segue esse mesmo padrão: um `.html` com a tela e um
 | Filtros com seleção única (select)             | O catálogo tem poucas recomendações                       |
 | Busca e filtros no navegador                   | O catálogo é pequeno; os filtros ficam instantâneos       |
 | Limite de tentativas na memória                | Mais simples, sem tabela nova                             |
-| Exclusão de contas substituída por desativação | Preserva a autoria das recomendações                      |
+
 
 ## Banco de dados
 
