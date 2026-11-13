@@ -1,12 +1,12 @@
 # Repositório GEPEN
 
-Repositório web de recomendações de materiais de língua e cultura japonesa do
+Catálogo web de recomendações de materiais de língua e cultura japonesa do
 Grupo de Ensino e Pesquisas Nipônicas (GEPEN), da Universidade Federal do Ceará.
 
 Professores e bolsistas cadastram as recomendações; os estudantes consultam o
 catálogo, sem precisar de conta.
 
-Projeto desenvolvido para a disciplina de Engenharia de Software.
+Projeto desenvolvido para a disciplina Engenharia de Software.
 
 ## Funcionalidades
 
@@ -19,6 +19,7 @@ Projeto desenvolvido para a disciplina de Engenharia de Software.
 
 **Área administrativa (professores e bolsistas)**
 
+- Acesso da equipe por um link discreto no rodapé do catálogo
 - Login, logout e alteração de senha
 - Limite de tentativas de login
 - Painel com busca pelo título e filtros por tipo, categoria, nível e idioma
@@ -29,7 +30,7 @@ Projeto desenvolvido para a disciplina de Engenharia de Software.
 
 - Node.js e Express
 - PostgreSQL (extensões `unaccent` e `pgcrypto`)
-- HTML, CSS e JavaScript, sem frameworks
+- HTML, CSS e JavaScript, sem frameworks no front-end
 - Bibliotecas: `pg`, `bcryptjs`, `express-session`, `connect-pg-simple`,
   `express-rate-limit`, `dotenv`
 
@@ -40,7 +41,7 @@ Projeto desenvolvido para a disciplina de Engenharia de Software.
 Instale, se ainda não tiver:
 
 - [Git](https://git-scm.com)
-- [Node.js](https://nodejs.org) (versão LTS)
+- [Node.js](https://nodejs.org), versão 20 ou mais recente (a versão LTS do site serve)
 - [PostgreSQL](https://www.postgresql.org), com o pgAdmin (já vem no instalador).
   Anote a senha do usuário `postgres` que você escolher na instalação.
 - Um editor de código, como o [VS Code](https://code.visualstudio.com)
@@ -73,7 +74,14 @@ O `npm install` baixa as bibliotecas listadas no `package.json` para a pasta
 
 ### 4. Configurar as variáveis de ambiente
 
-Copie o arquivo `.env.example`, renomeie a cópia para `.env` e preencha:
+Copie o arquivo `.env.example` para um novo arquivo chamado `.env`:
+
+```
+copy .env.example .env      (Windows)
+cp .env.example .env        (Linux e Mac)
+```
+
+Abra o `.env` e preencha:
 
 - `DATABASE_URL`: o endereço do seu banco local, no formato
   ```
@@ -98,7 +106,8 @@ O terminal deve mostrar que o servidor está rodando. Deixe-o aberto enquanto
 usa o site; para parar, aperte `Ctrl + C`.
 
 - Catálogo: http://localhost:3000
-- Login: http://localhost:3000/login.html
+- Login: link **Acesso da equipe**, no rodapé do catálogo
+  (ou direto em http://localhost:3000/login.html)
 - Conta de teste: `professor.teste@ufc.br` / `SenhaTeste2026`
 
 Para criar outras contas de teste pelo terminal:
@@ -113,12 +122,14 @@ entrando como professor.
 
 ### Problemas comuns
 
-| Sintoma | Causa provável |
-| Erro de senha ou `DATABASE_URL` indefinida ao iniciar | O `.env` não foi salvo, está com outro nome ou com a senha errada |
-| `database "gepen" does not exist` | O banco não foi criado, ou foi criado com outro nome |
-| `relation "..." does not exist` | Os scripts do banco não foram rodados, ou foram rodados no banco errado |
-| A página não mostra uma mudança feita no código | Cache do navegador: aperte `Ctrl + F5` |
-| `EADDRINUSE` na porta 3000 | O servidor já está aberto em outro terminal |
+| Sintoma                                                     | Causa provável                                                          |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Erro de senha ou `DATABASE_URL` indefinida ao iniciar       | O `.env` não foi salvo, está com outro nome ou com a senha errada       |
+| `database "gepen" does not exist`                           | O banco não foi criado, ou foi criado com outro nome                    |
+| `relation "..." does not exist`                             | Os scripts do banco não foram rodados, ou foram rodados no banco errado |
+| A página não mostra uma mudança feita no código             | Cache do navegador: aperte `Ctrl + F5`                                  |
+| `EADDRINUSE` na porta 3000                                  | O servidor já está aberto em outro terminal                             |
+| `Cannot use import statement` ou erros estranhos ao iniciar | Node.js antigo: confira com `node --version`                            |
 
 ## Como navegar pelo código
 
@@ -129,7 +140,7 @@ db/                    scripts SQL (schema, seed e dados de teste)
 public/                páginas HTML e o JavaScript que roda no navegador
 scripts/               ferramentas de linha de comando (criar_admin.js)
 src/
-  server.js            configuração do servidor
+  server.js            configuração do servidor (ponto de partida)
   db.js                conexão com o banco
   middlewares/         requireAuth (está logado?) e requireProfessor (é professor?)
   routes/              rotas: auth, opcoes, cards e contas
@@ -148,14 +159,15 @@ src/
 Cada página de `public/` segue esse mesmo padrão: um `.html` com a tela e um
 `.js` com o mesmo nome, que conversa com uma rota de `src/routes/`.
 
-| Página | JavaScript | Rotas usadas |
-| `index.html` (catálogo) | `catalogo.js` | `routes/cards.js`, `routes/opcoes.js` |
-| `login.html` | `login.js` | `routes/auth.js` |
-| `admin.html` (painel) | `admin.js` | `routes/cards.js`, `routes/opcoes.js`, `routes/auth.js` |
-| `novo_card.html` | `novo_card.js` | `routes/cards.js`, `routes/opcoes.js` |
-| `editar_card.html` | `editar_card.js` | `routes/cards.js`, `routes/opcoes.js` |
-| `contas.html` | `contas.js` | `routes/contas.js` |
-| `senha.html` | `senha.js` | `routes/auth.js` |
+| Página                  | JavaScript       | Rotas usadas                                            |
+| ----------------------- | ---------------- | ------------------------------------------------------- |
+| `index.html` (catálogo) | `catalogo.js`    | `routes/cards.js`, `routes/opcoes.js`                   |
+| `login.html`            | `login.js`       | `routes/auth.js`                                        |
+| `admin.html` (painel)   | `admin.js`       | `routes/cards.js`, `routes/opcoes.js`, `routes/auth.js` |
+| `novo_card.html`        | `novo_card.js`   | `routes/cards.js`, `routes/opcoes.js`                   |
+| `editar_card.html`      | `editar_card.js` | `routes/cards.js`, `routes/opcoes.js`                   |
+| `contas.html`           | `contas.js`      | `routes/contas.js`                                      |
+| `senha.html`            | `senha.js`       | `routes/auth.js`                                        |
 
 ## Regras de negócio e segurança
 
@@ -180,7 +192,7 @@ Cada página de `public/` segue esse mesmo padrão: um `.html` com a tela e um
 
 **Contas e permissões**
 
-- A primeira conta (professor) é criada pelo script `script/criar_admin.js` automaticamente na publicação
+- A primeira conta (professor) é criada pelo script `scripts/criar_admin.js`
 - Qualquer professor pode criar professores e bolsistas
 - Qualquer professor pode desativar bolsistas
 - Somente o professor original (a primeira conta de professor) pode desativar
@@ -204,6 +216,20 @@ Cada página de `public/` segue esse mesmo padrão: um `.html` com a tela e um
 - No filtro de tags do catálogo, aparecem apenas as recomendações que têm todas
   as tags marcadas
 
+## Decisões do projeto
+
+| Decisão                                        | Motivo                                                    |
+| ---------------------------------------------- | --------------------------------------------------------- |
+| JavaScript em vez de TypeScript                | Equipe mais familiarizada; projeto pequeno                |
+| Sessão com cookie em vez de JWT                | O logout precisa invalidar a sessão de verdade            |
+| SQL direto, sem ORM                            | Controle total das consultas e do schema                  |
+| Tabela `administrador` com papel               | Permite professores e bolsistas com permissões diferentes |
+| Tags vinculadas a uma categoria                | As tags aparecem conforme a categoria                     |
+| Filtros com seleção única (select)             | O catálogo tem poucas recomendações                       |
+| Busca e filtros no navegador                   | O catálogo é pequeno; os filtros ficam instantâneos       |
+| Limite de tentativas na memória                | Mais simples, sem tabela nova                             |
+| Exclusão de contas substituída por desativação | Preserva a autoria das recomendações                      |
+
 ## Banco de dados
 
 7 tabelas: `administrador`, `tipo`, `categoria`, `nivel`, `tag`, `card` e
@@ -212,22 +238,23 @@ sessões).
 
 ### Operações SQL da aplicação
 
-| Operação | Funcionalidade | Onde |
-| `SELECT` | Login | `routes/auth.js` |
-| `SELECT` | Dados do usuário logado | `routes/auth.js` |
-| `SELECT` | Tipos, categorias, níveis e tags | `routes/opcoes.js` |
-| `SELECT` | Listagem do catálogo e do painel | `routes/cards.js` |
-| `SELECT` | Uma recomendação, para edição | `routes/cards.js` |
-| `SELECT` | Listagem de contas | `routes/contas.js` |
-| `INSERT` | Cadastro de recomendação (`card`) | `routes/cards.js` |
-| `INSERT` | Tags da recomendação (`card_tag`) | `routes/cards.js` |
-| `INSERT` | Cadastro de conta (`administrador`) | `routes/contas.js` |
-| `UPDATE` | Alteração de senha | `routes/auth.js` |
-| `UPDATE` | Edição de recomendação | `routes/cards.js` |
-| `UPDATE` | Desativação de conta | `routes/contas.js` |
-| `DELETE` | Exclusão de recomendação | `routes/cards.js` |
-| `DELETE` | Troca das tags na edição (`card_tag`) | `routes/cards.js` |
-| `DELETE` | Encerramento de sessões | `routes/auth.js`, `routes/contas.js` |
+| Operação | Funcionalidade                        | Onde                                 |
+| -------- | ------------------------------------- | ------------------------------------ |
+| `SELECT` | Login                                 | `routes/auth.js`                     |
+| `SELECT` | Dados do usuário logado               | `routes/auth.js`                     |
+| `SELECT` | Tipos, categorias, níveis e tags      | `routes/opcoes.js`                   |
+| `SELECT` | Listagem do catálogo e do painel      | `routes/cards.js`                    |
+| `SELECT` | Uma recomendação, para edição         | `routes/cards.js`                    |
+| `SELECT` | Listagem de contas                    | `routes/contas.js`                   |
+| `INSERT` | Cadastro de recomendação (`card`)     | `routes/cards.js`                    |
+| `INSERT` | Tags da recomendação (`card_tag`)     | `routes/cards.js`                    |
+| `INSERT` | Cadastro de conta (`administrador`)   | `routes/contas.js`                   |
+| `UPDATE` | Alteração de senha                    | `routes/auth.js`                     |
+| `UPDATE` | Edição de recomendação                | `routes/cards.js`                    |
+| `UPDATE` | Desativação de conta                  | `routes/contas.js`                   |
+| `DELETE` | Exclusão de recomendação              | `routes/cards.js`                    |
+| `DELETE` | Troca das tags na edição (`card_tag`) | `routes/cards.js`                    |
+| `DELETE` | Encerramento de sessões               | `routes/auth.js`, `routes/contas.js` |
 
 ## Limitações conhecidas
 
@@ -238,6 +265,10 @@ sessões).
 - A disponibilidade dos links depende dos sites de origem
 - A troca da senha provisória no primeiro acesso é uma orientação, e não é
   obrigatória pelo sistema
+- As páginas administrativas ficam em `public/`: sem login, o HTML chega a ser
+  entregue, mas fica escondido e os dados não carregam, porque as rotas
+  `/admin` exigem sessão
+- O site ainda não tem estilo visual (CSS)
 - A busca e os filtros rodam no navegador; se o catálogo passar de alguns
   milhares de recomendações, a filtragem deve ir para o servidor
 
@@ -247,15 +278,19 @@ Ajustes necessários antes de publicar:
 
 1. No `server.js`, ativar `app.set("trust proxy", 1)`
 2. No cookie da sessão, usar `secure: true` (exige HTTPS)
-3. Criar a conta do professor rodando `scripts/criar_admin.js` com a
+3. Configurar na hospedagem as variáveis `DATABASE_URL` e `SESSION_SECRET`
+4. No banco de produção, rodar somente `01_schema.sql` e `02_seed.sql`
+5. Criar a conta do professor rodando `scripts/criar_admin.js` com a
    `DATABASE_URL` do banco de produção, e entregar a senha provisória ao
    professor por um canal seguro
-4. No banco de produção, rodar somente `01_schema.sql` e `02_seed.sql`
-5. Usar, no banco de produção, um usuário próprio da aplicação, com permissão
+6. Usar, no banco de produção, um usuário próprio da aplicação, com permissão
    apenas no banco do projeto
 
 ## Melhorias futuras
 
 - Convite e recuperação de senha por e-mail
 - Filtro por data (ano, mês e semana)
+- Reativação de contas desativadas
 - Criação automática da conta do professor na primeira inicialização do servidor
+- Servir as páginas administrativas somente com login, pelo servidor
+- Criação do design das páginas por CSS
