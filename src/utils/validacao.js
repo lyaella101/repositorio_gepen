@@ -6,11 +6,5 @@ export function urlValida(texto) {
     return false;
   }
 }
-// Pras imagens
-export function urlHttpsValida(texto) {
-  try {
-    return new URL(texto).protocol === "https:";
-  } catch {
-    return false;
-  }
-}
+
+

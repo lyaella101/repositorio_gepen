@@ -1,6 +1,9 @@
 const nomeUsuario = document.getElementById("nome_usuario");
 const tabelaCards = document.getElementById("tabela_cards");
 const mensagem = document.getElementById("mensagem");
+const campoBusca = document.getElementById("busca");
+
+let todosOsCards = [];
 
 async function verificarSessao() {
   try {
@@ -26,26 +29,49 @@ async function verificarSessao() {
 async function carregarTabela() {
   try {
     const resposta = await fetch("/cards");
-    const cards = await resposta.json();
-
-    tabelaCards.textContent = "";
-
-    if (cards.length === 0) {
-      const linha = tabelaCards.insertRow();
-      const celula = linha.insertCell();
-      celula.colSpan = 4;
-      celula.textContent = "Nenhuma recomendação cadastrada";
-      return;
-    }
-
-    for (const card of cards) {
-      tabelaCards.appendChild(criarLinha(card));
-    }
+    todosOsCards = await resposta.json();
+    mostrarTabela(todosOsCards);
   } catch (error) {
     tabelaCards.textContent = "";
-    mensagem.textContent = "Não foi possível carregar as recomendações";
+    mensagem.textContent = "Não foi possível carregar as recomendações.";
   }
 }
+
+function mostrarTabela(cards) {
+  tabelaCards.textContent = "";
+
+  if (cards.length === 0) {
+    const linha = tabelaCards.insertRow();
+    const celula = linha.insertCell();
+    celula.colSpan = 5;
+    celula.textContent =
+      todosOsCards.length === 0
+        ? "Nenhuma recomendação cadastrada."
+        : "Nenhuma recomendação encontrada.";
+    return;
+  }
+
+  for (const card of cards) {
+    tabelaCards.appendChild(criarLinha(card));
+  }
+}
+
+function semAcentos(texto) {
+  return texto
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function buscar() {
+  const termo = semAcentos(campoBusca.value.trim());
+  const encontrados = todosOsCards.filter((card) =>
+    semAcentos(card.titulo).includes(termo),
+  );
+  mostrarTabela(encontrados);
+}
+
+campoBusca.addEventListener("input", buscar);
 
 function criarLinha(card) {
   const linha = document.createElement("tr");
@@ -100,6 +126,7 @@ async function excluirCard(card, linha) {
 
     if (resposta.ok) {
       linha.remove();
+      todosOsCards = todosOsCards.filter((item) => item.id !== card.id);
       mensagem.style.color = "green";
       mensagem.textContent = dados.message;
     } else {

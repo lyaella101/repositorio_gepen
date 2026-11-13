@@ -1,6 +1,6 @@
 import express from "express";
 import { pool } from "../db.js";
-import { urlValida, urlHttpsValida } from "../utils/validacao.js";
+import { urlValida } from "../utils/validacao.js";
 
 const router = express.Router();
 
@@ -12,17 +12,8 @@ function idValido(valor) {
 }
 
 function validarCard(dados) {
-  const {
-    titulo,
-    url,
-    descricao,
-    tipoId,
-    categoriaId,
-    nivelId,
-    idioma,
-    imagemUrl,
-    tags,
-  } = dados;
+  const { titulo, url, descricao, tipoId, categoriaId, nivelId, idioma, tags } =
+    dados;
   if (
     !titulo ||
     !titulo.trim() ||
@@ -54,10 +45,6 @@ function validarCard(dados) {
     return "Escolha um idioma válido";
   }
 
-  if (imagemUrl && (imagemUrl.length > 2048 || !urlHttpsValida(imagemUrl))) {
-    return "A URL da imagem precisa começar com https://";
-  }
-
   if (!Array.isArray(tags) || tags.length < 1 || tags.length > MAXIMO_TAGS) {
     return `Escolha de 1 a ${MAXIMO_TAGS} tags`;
   }
@@ -78,7 +65,6 @@ c.url,
 c.descricao,
 c.idioma,
 c.observacoes,
-c.imagem_url,
 c.data_envio,
 c.tipo_id,
 c.categoria_id,
@@ -116,7 +102,7 @@ router.get("/admin/cards/:id", async (req, res) => {
       `
       SELECT
          c.id, c.titulo, c.url, c.descricao, c.tipo_id, c.categoria_id,
-         c.nivel_id, c.idioma, c.observacoes, c.imagem_url,
+         c.nivel_id, c.idioma, c.observacoes, 
          (SELECT COALESCE(json_agg(ct.tag_id), '[]')
           FROM card_tag ct
           WHERE ct.card_id = c.id) AS tags
@@ -146,7 +132,6 @@ router.post("/admin/cards", async (req, res) => {
     nivelId,
     idioma,
     observacoes,
-    imagemUrl,
     tags,
   } = req.body;
 
@@ -178,8 +163,8 @@ router.post("/admin/cards", async (req, res) => {
     const resultado = await client.query(
       `INSERT INTO card
          (administrador_id, tipo_id, categoria_id, nivel_id, titulo, url,
-          descricao, idioma, observacoes, imagem_url)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+          descricao, idioma, observacoes)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING id`,
       [
         req.session.administradorId,
@@ -191,7 +176,6 @@ router.post("/admin/cards", async (req, res) => {
         descricao.trim(),
         idioma,
         observacoes?.trim() || null,
-        imagemUrl || null,
       ],
     );
 
@@ -253,7 +237,6 @@ router.put("/admin/cards/:id", async (req, res) => {
     nivelId,
     idioma,
     observacoes,
-    imagemUrl,
     tags,
   } = req.body;
 
@@ -277,9 +260,9 @@ router.put("/admin/cards/:id", async (req, res) => {
     const resultado = await client.query(
       `UPDATE card SET
          tipo_id = $1, categoria_id = $2, nivel_id = $3, titulo = $4, url = $5,
-         descricao = $6, idioma = $7, observacoes = $8, imagem_url = $9,
+         descricao = $6, idioma = $7, observacoes = $8,
          atualizado_em = NOW()
-       WHERE id = $10`,
+       WHERE id = $9`,
       [
         tipoId,
         categoriaId,
@@ -289,7 +272,6 @@ router.put("/admin/cards/:id", async (req, res) => {
         descricao.trim(),
         idioma,
         observacoes?.trim() || null,
-        imagemUrl || null,
         cardId,
       ],
     );

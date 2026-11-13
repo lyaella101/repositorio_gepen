@@ -97,7 +97,6 @@ formulario.addEventListener("submit", async (event) => {
     categoriaId: Number(formulario.categoriaId.value),
     nivelId: Number(formulario.nivelId.value),
     idioma: formulario.idioma.value,
-    imagemUrl: formulario.imagemUrl.value,
     observacoes: formulario.observacoes.value,
     tags: tagsMarcadas,
   };

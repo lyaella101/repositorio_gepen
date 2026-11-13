@@ -56,7 +56,6 @@ async function iniciar() {
     formulario.categoriaId.value = card.categoria_id;
     formulario.nivelId.value = card.nivel_id;
     formulario.idioma.value = card.idioma;
-    formulario.imagemUrl.value = card.imagem_url ?? "";
     formulario.observacoes.value = card.observacoes ?? "";
 
     await carregarTags(card.categoria_id, card.tags);
@@ -127,7 +126,6 @@ formulario.addEventListener("submit", async (event) => {
     categoriaId: Number(formulario.categoriaId.value),
     nivelId: Number(formulario.nivelId.value),
     idioma: formulario.idioma.value,
-    imagemUrl: formulario.imagemUrl.value,
     observacoes: formulario.observacoes.value,
     tags: tagsMarcadas,
   };

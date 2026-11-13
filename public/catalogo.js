@@ -7,6 +7,7 @@ const filtroCategoria = document.getElementById("filtro_categoria");
 const filtroNivel = document.getElementById("filtro_nivel");
 const filtroTags = document.getElementById("filtro_tags");
 const botaoLimpar = document.getElementById("limpar_filtros");
+const janela = document.getElementById("detalhes");
 
 let todosOsCards = [];
 
@@ -33,7 +34,8 @@ function mostrarCards(cards) {
     return;
   }
 
-  contagem.textContent = `${cards.length} recomendações (Mais recente)`;
+  const palavra = cards.length === 1 ? "recomendação" : "recomendações";
+  contagem.textContent = `${cards.length} ${palavra} (Mais recentes)`;
 
   for (const card of cards) {
     listaCards.appendChild(criarCard(card));
@@ -42,46 +44,65 @@ function mostrarCards(cards) {
 
 function criarCard(card) {
   const bloco = document.createElement("article");
-
-  if (card.imagem_url) {
-    const imagem = document.createElement("img");
-    imagem.src = card.imagem_url;
-    imagem.alt = `Capa de ${card.titulo}`;
-    imagem.width = 240;
-    bloco.appendChild(imagem);
-  }
+  bloco.addEventListener("click", () => abrirDetalhes(card));
 
   const titulo = document.createElement("h2");
-  const link = document.createElement("a");
-  link.href = card.url;
-  link.textContent = card.titulo;
-  link.target = "_blank";
-  link.rel = "noopener noreferrer";
-  titulo.appendChild(link);
+  const botaoTitulo = document.createElement("button");
+  botaoTitulo.type = "button";
+  botaoTitulo.textContent = card.titulo;
+  titulo.appendChild(botaoTitulo);
   bloco.appendChild(titulo);
 
   const classificacao = document.createElement("p");
   classificacao.textContent = `${card.tipo} · ${card.categoria} · ${card.nivel}`;
   bloco.appendChild(classificacao);
 
-  const idioma = document.createElement("p");
-  idioma.textContent = `Idioma: ${card.idioma}`;
-  bloco.appendChild(idioma);
-
-  const data = document.createElement("p");
-  data.textContent = `Publicado em: ${new Date(card.data_envio).toLocaleDateString("pt-BR")}`;
-  bloco.appendChild(data);
-
-  const descricao = document.createElement("p");
-  descricao.textContent = `Sobre: ${card.descricao}`;
-  bloco.appendChild(descricao);
-
   const paragrafoTags = document.createElement("p");
   paragrafoTags.textContent = `Tags: ${card.tags.map((tag) => tag.nome).join(", ")}`;
   bloco.appendChild(paragrafoTags);
 
+  const linkMaterial = document.createElement("a");
+  linkMaterial.href = card.url;
+  linkMaterial.textContent = "Abrir material";
+  linkMaterial.target = "_blank";
+  linkMaterial.rel = "noopener noreferrer";
+  linkMaterial.addEventListener("click", (event) => event.stopPropagation());
+  bloco.appendChild(linkMaterial);
+
   return bloco;
 }
+
+function abrirDetalhes(card) {
+  document.getElementById("detalhes_titulo").textContent = card.titulo;
+  document.getElementById("detalhes_classificacao").textContent =
+    `${card.tipo} · ${card.categoria} · ${card.nivel}`;
+  document.getElementById("detalhes_tags").textContent =
+    `Tags: ${card.tags.map((tag) => tag.nome).join(", ")}`;
+  document.getElementById("detalhes_descricao").textContent = card.descricao;
+
+  document.getElementById("detalhes_area_observacoes").hidden =
+    !card.observacoes;
+  document.getElementById("detalhes_observacoes").textContent =
+    card.observacoes ?? "";
+
+  document.getElementById("detalhes_idioma").textContent =
+    `Idioma: ${card.idioma}`;
+  document.getElementById("detalhes_data").textContent =
+    `Publicado em ${new Date(card.data_envio).toLocaleDateString("pt-BR")}`;
+  document.getElementById("detalhes_link").href = card.url;
+
+  janela.showModal();
+}
+
+document.getElementById("fechar_detalhes").addEventListener("click", () => {
+  janela.close();
+});
+
+janela.addEventListener("click", (event) => {
+  if (event.target === janela) {
+    janela.close();
+  }
+});
 
 async function preencherLista(campo, endereco) {
   const resposta = await fetch(endereco);
