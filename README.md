@@ -52,7 +52,7 @@ Para conferir se deu certo, abra um terminal e rode `git --version` e
 ### 2. Baixar o projeto e instalar as dependências
 
 ```
-git clone [endereço do repositório]
+git clone https://github.com/lyaella101/repositorio_gepen.git
 cd repositorio_gepen
 npm install
 ```
