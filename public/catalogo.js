@@ -135,7 +135,7 @@ function aplicarFiltros() {
 
   const visiveis = todosOsCards.filter(
     (card) =>
-      semAcentos(card.titulo).includes(termo) &&
+      (semAcentos(card.titulo).includes(termo) || semAcentos(card.descricao).includes(termo)) &&
       (!tipoId || card.tipo_id === tipoId) &&
       (!categoriaId || card.categoria_id === categoriaId) &&
       (!nivelId || card.nivel_id === nivelId) &&

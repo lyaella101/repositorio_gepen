@@ -19,10 +19,11 @@ async function verificarSessao() {
 
     if (resposta.status === 401) {
       window.location.href = "/login.html";
-      return false;                                  // 1
+      return false; // 1
     }
 
-    if (!resposta.ok) {                              // 2
+    if (!resposta.ok) {
+      // 2
       throw new Error("Resposta inesperada: " + resposta.status);
     }
 
@@ -33,11 +34,12 @@ async function verificarSessao() {
       document.getElementById("link_contas").hidden = false;
     }
 
-    conteudo.hidden = false;                         // 3
+    conteudo.hidden = false; // 3
     return true;
   } catch (error) {
     console.error("Erro ao verificar sessão:", error);
-    avisoSessao.textContent = "Não foi possível carregar o painel. Tente recarregar a página.";
+    avisoSessao.textContent =
+      "Não foi possível carregar o painel. Tente recarregar a página.";
     return false;
   }
 }
@@ -88,7 +90,8 @@ function aplicarFiltros() {
 
   const encontrados = todosOsCards.filter(
     (card) =>
-      semAcentos(card.titulo).includes(termo) &&
+      (semAcentos(card.titulo).includes(termo) ||
+        semAcentos(card.descricao).includes(termo)) &&
       (tipo === "" || card.tipo_id === Number(tipo)) &&
       (categoria === "" || card.categoria_id === Number(categoria)) &&
       (nivel === "" || card.nivel_id === Number(nivel)) &&
@@ -191,7 +194,7 @@ botaoLimpar.addEventListener("click", () => {
 
 async function iniciar() {
   const logado = await verificarSessao();
-  if(!logado) return;
+  if (!logado) return;
 
   try {
     await Promise.all([
