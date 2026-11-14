@@ -9,6 +9,40 @@ function idValido(valor) {
   return Number.isInteger(valor) && valor >= 1;
 }
 
+async function verificarGerenciamento(
+  alvoId,
+  solicitanteId,
+  mensagemPropriaConta,
+) {
+  if (alvoId === solicitanteId) {
+    return { status: 400, error: mensagemPropriaConta };
+  }
+
+  const resultado = await pool.query(
+    "SELECT papel, ativo FROM administrador WHERE id = $1",
+    [alvoId],
+  );
+  const conta = resultado.rows[0];
+
+  if (!conta) {
+    return { status: 404, error: "Conta não encontrada" };
+  }
+
+  if (conta.papel === "professor") {
+    const original = await pool.query(
+      "SELECT MIN(id) AS id FROM administrador WHERE papel = 'professor'",
+    );
+    if (original.rows[0].id !== solicitanteId) {
+      return {
+        status: 403,
+        error: "Apenas o professor original pode gerenciar outros professores",
+      };
+    }
+  }
+
+  return { conta };
+}
+
 router.get("/admin/contas", async (req, res) => {
   try {
     const resultado = await pool.query(`
@@ -72,39 +106,20 @@ router.post("/admin/contas", async (req, res) => {
 
 router.patch("/admin/contas/:id/desativar", async (req, res) => {
   const contaId = Number(req.params.id);
-  const quemPede = req.session.administradorId;
 
   if (!idValido(contaId)) {
     return res.status(400).json({ error: "Conta inválida" });
   }
 
-  if (contaId === quemPede) {
-    return res
-      .status(400)
-      .json({ error: "Você não pode desativar a própria conta" });
-  }
-
   try {
-    const busca = await pool.query(
-      "SELECT papel FROM administrador WHERE id = $1",
-      [contaId],
+    const verificacao = await verificarGerenciamento(
+      contaId,
+      req.session.administradorId,
+      "Você não pode desativar a própria conta",
     );
-    const alvo = busca.rows[0];
 
-    if (!alvo) {
-      return res.status(404).json({ error: "Conta não encontrada" });
-    }
-
-    if (alvo.papel === "professor") {
-      const original = await pool.query(
-        "SELECT MIN(id) AS id FROM administrador WHERE papel = 'professor'",
-      );
-      if (original.rows[0].id !== quemPede) {
-        return res.status(403).json({
-          error:
-            "Apenas o professor original pode desativar outros professores",
-        });
-      }
+    if (verificacao.error) {
+      return res.status(verificacao.status).json({ error: verificacao.error });
     }
 
     await pool.query("UPDATE administrador SET ativo = false WHERE id = $1", [
@@ -121,4 +136,54 @@ router.patch("/admin/contas/:id/desativar", async (req, res) => {
     res.status(500).json({ error: "Erro ao desativar conta" });
   }
 });
+
+router.patch("/admin/contas/:id/redefinir_senha", async (req, res) => {
+  const contaId = Number(req.params.id);
+
+  if (!idValido(contaId)) {
+    return res.status(400).json({ error: "Conta inválida" });
+  }
+
+  try {
+    const verificacao = await verificarGerenciamento(
+      contaId,
+      req.session.administradorId,
+      "Para a sua própria conta, use a tela Alterar senha",
+    );
+
+    if (verificacao.error) {
+      return res.status(verificacao.status).json({ error: verificacao.error });
+    }
+
+    if (!verificacao.conta.ativo) {
+      return res
+        .status(400)
+        .json({
+          error: "Não é possível redefinir a senha de uma conta desativada",
+        });
+    }
+
+    const senhaProvisoria = crypto.randomBytes(9).toString("base64url");
+    const senhaHash = await bcrypt.hash(senhaProvisoria, 10);
+
+    await pool.query("UPDATE administrador SET senha_hash = $1 WHERE id = $2", [
+      senhaHash,
+      contaId,
+    ]);
+
+    await pool.query(
+      "DELETE FROM session WHERE sess->>'administradorId' = $1",
+      [String(contaId)],
+    );
+
+    res.json({
+      message: "Senha redefinida. Entregue a senha provisória à pessoa.",
+      senhaProvisoria,
+    });
+  } catch (error) {
+    console.error("Erro ao redefinir senha:", error);
+    res.status(500).json({ error: "Erro ao redefinir senha" });
+  }
+});
+
 export default router;

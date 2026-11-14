@@ -24,7 +24,7 @@ Projeto desenvolvido para a disciplina Engenharia de Software.
 - Limite de tentativas de login
 - Painel com busca pelo título e filtros por tipo, categoria, nível e idioma
 - Cadastro, edição e exclusão de recomendações, com tags por categoria
-- Gerenciamento de contas (somente professores)
+- Gerenciamento de contas: criação, desativação e redefinição de senha (somente professores)
 
 ## Tecnologias
 
@@ -199,6 +199,7 @@ Cada página de `public/` segue esse mesmo padrão: um `.html` com a tela e um
   outros professores
 - Ninguém pode desativar a própria conta
 - Contas desativadas não conseguem entrar, e suas sessões são encerradas
+- Professores podem redefinir a senha de outras contas ativas, com as mesmas regras da desativação; a senha provisória é mostrada uma única vez e as sessões da conta são encerradas
 
 **Recomendações**
 
@@ -218,16 +219,15 @@ Cada página de `public/` segue esse mesmo padrão: um `.html` com a tela e um
 
 ## Decisões do projeto
 
-| Decisão                                        | Motivo                                                    |
-| ---------------------------------------------- | --------------------------------------------------------- |
-| Sessão com cookie em vez de JWT                | O logout precisa invalidar a sessão de verdade            |
-| SQL direto, sem ORM                            | Controle total das consultas e do schema                  |
-| Tabela `administrador` com papel               | Permite professores e bolsistas com permissões diferentes |
-| Tags vinculadas a uma categoria                | As tags aparecem conforme a categoria                     |
-| Filtros com seleção única (select)             | O catálogo tem poucas recomendações                       |
-| Busca e filtros no navegador                   | O catálogo é pequeno; os filtros ficam instantâneos       |
-| Limite de tentativas na memória                | Mais simples, sem tabela nova                             |
-
+| Decisão                            | Motivo                                                    |
+| ---------------------------------- | --------------------------------------------------------- |
+| Sessão com cookie em vez de JWT    | O logout precisa invalidar a sessão de verdade            |
+| SQL direto, sem ORM                | Controle total das consultas e do schema                  |
+| Tabela `administrador` com papel   | Permite professores e bolsistas com permissões diferentes |
+| Tags vinculadas a uma categoria    | As tags aparecem conforme a categoria                     |
+| Filtros com seleção única (select) | O catálogo tem poucas recomendações                       |
+| Busca e filtros no navegador       | O catálogo é pequeno; os filtros ficam instantâneos       |
+| Limite de tentativas na memória    | Mais simples, sem tabela nova                             |
 
 ## Banco de dados
 
@@ -251,6 +251,7 @@ sessões).
 | `UPDATE` | Alteração de senha                    | `routes/auth.js`                     |
 | `UPDATE` | Edição de recomendação                | `routes/cards.js`                    |
 | `UPDATE` | Desativação de conta                  | `routes/contas.js`                   |
+| `UPDATE` | Redefinição de senha                  | `routes/contas.js`                   |
 | `DELETE` | Exclusão de recomendação              | `routes/cards.js`                    |
 | `DELETE` | Troca das tags na edição (`card_tag`) | `routes/cards.js`                    |
 | `DELETE` | Encerramento de sessões               | `routes/auth.js`, `routes/contas.js` |

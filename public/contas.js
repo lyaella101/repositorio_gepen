@@ -35,11 +35,17 @@ function mostrarContas(contas) {
     const acoes = linha.insertCell();
 
     if (conta.ativo) {
-      const botao = document.createElement("button");
-      botao.type = "button";
-      botao.textContent = "Desativar";
-      botao.addEventListener("click", () => desativarConta(conta));
-      acoes.appendChild(botao);
+      const botaoDesativar = document.createElement("button");
+      botaoDesativar.type = "button";
+      botaoDesativar.textContent = "Desativar";
+      botaoDesativar.addEventListener("click", () => desativarConta(conta));
+      acoes.appendChild(botaoDesativar);
+      acoes.append(" ");
+      const botaoRedefinir = document.createElement("button");
+      botaoRedefinir.type = "button";
+      botaoRedefinir.textContent = "Redefinir senha";
+      botaoRedefinir.addEventListener("click", () => redefinirSenha(conta));
+      acoes.appendChild(botaoRedefinir);
     }
 
     tabelaContas.appendChild(linha);
@@ -120,6 +126,46 @@ async function desativarConta(conta) {
   } catch (error) {
     mensagem.style.color = "red";
     mensagem.textContent = "Não foi possível conectar. Tente novamente.";
+  }
+}
+
+async function redefinirSenha(conta) {
+  if (
+    !confirm(
+      `Redefinir a senha de ${conta.nome}? A senha atual deixará de funcionar.`,
+    )
+  ) {
+    return;
+  }
+
+  try {
+    const resposta = await fetch(`/admin/contas/${conta.id}/redefinir_senha`, {
+      method: "PATCH",
+    });
+
+    if (resposta.status === 401) {
+      window.location.href = "/login.html";
+      return;
+    }
+
+    const dados = await resposta.json();
+
+    if (resposta.ok) {
+      senhaCriada.textContent =
+        `Nova senha provisória de ${conta.nome}: ${dados.senhaProvisoria} ` +
+        " " +
+        "Anote agora: ela não será mostrada de novo.";
+      senhaCriada.hidden = false;
+      mensagem.style.color = "green";
+      mensagem.textContent = dados.message;
+    } else {
+      mensagem.style.color = "red";
+      mensagem.textContent = dados.error;
+    }
+  } catch (error) {
+    mensagem.style.color = "red";
+    mensagem.textContent =
+      "Não foi possível redefinir a senha. Tente novamente.";
   }
 }
 
