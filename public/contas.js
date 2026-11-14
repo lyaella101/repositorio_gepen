@@ -2,6 +2,7 @@ const mensagem = document.getElementById("mensagem");
 const areaContas = document.getElementById("area_contas");
 const formulario = document.getElementById("formulario_conta");
 const senhaCriada = document.getElementById("senha_criada");
+const senhaNome = document.getElementById("senha_nome");
 const senhaValor = document.getElementById("senha_valor");
 const tabelaContas = document.getElementById("tabela_contas");
 
@@ -54,11 +55,14 @@ function mostrarContas(contas) {
 
 formulario.addEventListener("submit", async (event) => {
   event.preventDefault();
+
+  const nome = formulario.nome.value.trim();
+
   mensagem.textContent = "";
   senhaCriada.hidden = true;
 
   const dadosConta = {
-    nome: formulario.nome.value,
+    nome,
     email: formulario.email.value,
     papel: formulario.papel.value,
   };
@@ -78,10 +82,7 @@ formulario.addEventListener("submit", async (event) => {
     const dados = await resposta.json();
 
     if (resposta.ok) {
-      mensagem.style.color = "green";
-      mensagem.textContent = dados.message;
-      senhaValor.textContent = dados.senhaProvisoria;
-      senhaCriada.hidden = false;
+      mostrarSenhaProvisoria(nome, dados.senhaProvisoria);
       formulario.reset();
       await atualizarTabela();
     } else {
@@ -89,6 +90,7 @@ formulario.addEventListener("submit", async (event) => {
       mensagem.textContent = dados.error;
     }
   } catch (error) {
+    console.error("Erro ao criar conta:", error);
     mensagem.style.color = "red";
     mensagem.textContent = "Não foi possível conectar. Tente novamente.";
   }
@@ -124,6 +126,7 @@ async function desativarConta(conta) {
       mensagem.textContent = dados.error;
     }
   } catch (error) {
+    console.error("Erro ao desativar conta:", error);
     mensagem.style.color = "red";
     mensagem.textContent = "Não foi possível conectar. Tente novamente.";
   }
@@ -151,11 +154,7 @@ async function redefinirSenha(conta) {
     const dados = await resposta.json();
 
     if (resposta.ok) {
-      senhaCriada.textContent =
-        `Nova senha provisória de ${conta.nome}: ${dados.senhaProvisoria} ` +
-        " " +
-        "Anote agora: ela não será mostrada de novo.";
-      senhaCriada.hidden = false;
+      mostrarSenhaProvisoria(conta.nome, dados.senhaProvisoria);
       mensagem.style.color = "green";
       mensagem.textContent = dados.message;
     } else {
@@ -163,10 +162,17 @@ async function redefinirSenha(conta) {
       mensagem.textContent = dados.error;
     }
   } catch (error) {
+    console.error("Erro ao redefinir senha:", error);
     mensagem.style.color = "red";
     mensagem.textContent =
       "Não foi possível redefinir a senha. Tente novamente.";
   }
+}
+
+function mostrarSenhaProvisoria(nome, senha) {
+  senhaNome.textContent = nome;
+  senhaValor.textContent = senha;
+  senhaCriada.hidden = false;
 }
 
 async function atualizarTabela() {

@@ -70,7 +70,7 @@ router.post("/admin/contas", async (req, res) => {
   if (email.trim().length > 255 || !email.includes("@")) {
     return res.status(400).json({ error: "Informe um email válido" });
   }
-  if (papel != "professor" && papel !== "bolsista") {
+  if (papel !== "professor" && papel !== "bolsista") {
     return res
       .status(400)
       .json({ error: "Escolha um papel: professor ou bolsista" });
