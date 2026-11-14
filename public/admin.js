@@ -19,11 +19,10 @@ async function verificarSessao() {
 
     if (resposta.status === 401) {
       window.location.href = "/login.html";
-      return false; // 1
+      return false;
     }
 
     if (!resposta.ok) {
-      // 2
       throw new Error("Resposta inesperada: " + resposta.status);
     }
 
@@ -124,7 +123,7 @@ function criarLinha(card) {
   linkMaterial.rel = "noopener noreferrer";
   celulaTitulo.appendChild(linkMaterial);
 
-  linha.insertCell().textContent = `${card.titulo} · ${card.tipo} · ${card.categoria} · ${card.nivel}`;
+  linha.insertCell().textContent = `${card.tipo} · ${card.categoria} · ${card.nivel}`;
   linha.insertCell().textContent = `${card.tags.map((tag) => tag.nome).join(", ")}`;
   linha.insertCell().textContent = new Date(card.data_envio).toLocaleDateString(
     "pt-BR",
@@ -160,7 +159,7 @@ async function excluirCard(card, linha) {
     const dados = await resposta.json();
 
     if (resposta.status === 401) {
-      window.location.href("/login.html");
+      window.location.href = "/login.html";
       return;
     }
 
@@ -174,8 +173,8 @@ async function excluirCard(card, linha) {
       mensagem.textContent = dados.error;
     }
   } catch (error) {
-    mensagemErro.style.color = "red";
-    mensagemErro.textContent =
+    mensagem.style.color = "red";
+    mensagem.textContent =
       "Não foi possível excluir a recomendação. Tente novamente.";
   }
 }
