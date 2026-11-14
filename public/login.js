@@ -29,3 +29,14 @@ formulario.addEventListener("submit", async (event) => {
       "Não foi possível conectar ao servidor. Tente novamente.";
   }
 });
+
+async function redirecionarSeLogado() {
+  try {
+    const resposta = await fetch("/admin/eu");
+    if (resposta.ok) {
+      window.location.href = "/admin.html";
+    }
+  } catch (error) {}
+}
+
+redirecionarSeLogado();
