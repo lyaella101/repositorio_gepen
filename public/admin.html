@@ -6,6 +6,18 @@
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
+    <header class="cabecalho">
+      <a class="cabecalho-marca" href="/">
+        <span class="cabecalho-logo" aria-hidden="true"></span>
+        Repositório GEPEN
+      </a>
+      <nav class="cabecalho-acoes" aria-label="Conta">
+        <a href="/senha.html">Alterar senha</a>
+        <form method="POST" action="/logout">
+          <button type="submit">Sair</button>
+        </form>
+      </nav>
+    </header>
     <p id="aviso_sessao"></p>
 
     <main id="conteudo" hidden>
@@ -86,6 +98,6 @@
       </table>
     </main>
 
-    <script src="/admin.js"></script>
+    <script src="/js/admin.js"></script>
   </body>
 </html>

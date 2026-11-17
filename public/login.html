@@ -6,6 +6,15 @@
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
+    <header class="cabecalho">
+      <a class="cabecalho-marca" href="/">
+        <span class="cabecalho-logo" aria-hidden="true"></span>
+        Repositório GEPEN
+      </a>
+      <nav class="cabecalho-acoes" aria-label="Conta">
+        <a href="/login.html">Entrar</a>
+      </nav>
+    </header>
     <h1>Login</h1>
     <form id="formulario-login" method="POST" action="/login">
       <label
@@ -20,6 +29,6 @@
     </form>
     <p id="error-message" style="color: red"></p>
 
-    <script src="/login.js"></script>
+    <script src="/js/login.js"></script>
   </body>
 </html>

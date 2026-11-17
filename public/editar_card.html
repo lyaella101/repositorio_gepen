@@ -6,6 +6,18 @@
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
+    <header class="cabecalho">
+      <a class="cabecalho-marca" href="/">
+        <span class="cabecalho-logo" aria-hidden="true"></span>
+        Repositório GEPEN
+      </a>
+      <nav class="cabecalho-acoes" aria-label="Conta">
+        <a href="/senha.html">Alterar senha</a>
+        <form method="POST" action="/logout">
+          <button type="submit">Sair</button>
+        </form>
+      </nav>
+    </header>
     <a href="/admin.html">Voltar</a>
     <h1>Editar recomendação</h1>
 
@@ -79,6 +91,6 @@
 
     <p id="mensagem" aria-live="polite"></p>
 
-    <script src="/editar_card.js"></script>
+    <script src="/js/editar_card.js"></script>
   </body>
 </html>

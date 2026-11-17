@@ -137,7 +137,9 @@ entrando como professor.
 
 ```
 db/                    scripts SQL (schema, seed e dados de teste)
-public/                páginas HTML e o JavaScript que roda no navegador
+public/                páginas HTML (uma por tela)
+  css/                 estilos (style.css)
+  js/                  o JavaScript que roda no navegador, um por página
 scripts/               ferramentas de linha de comando (criar_admin.js)
 src/
   server.js            configuração do servidor (ponto de partida)
@@ -153,11 +155,11 @@ src/
 2. **`src/server.js`**: a ordem em que o servidor monta tudo (arquivos
    estáticos, sessão, proteção das rotas `/admin` e as rotas).
 3. **Um caminho completo**, do navegador ao banco. Por exemplo, o catálogo:
-   `public/index.html` → `public/catalogo.js` (faz o `fetch("/cards")`) →
+   `public/index.html` → `public/js/catalogo.js` (faz o `fetch("/cards")`) →
    `src/routes/cards.js` (rota `GET /cards`, que faz o `SELECT`) → banco.
 
 Cada página de `public/` segue esse mesmo padrão: um `.html` com a tela e um
-`.js` com o mesmo nome, que conversa com uma rota de `src/routes/`.
+`.js` com o mesmo nome em `public/js/`, que conversa com uma rota de `src/routes/`.
 
 | Página                  | JavaScript       | Rotas usadas                                            |
 | ----------------------- | ---------------- | ------------------------------------------------------- |
