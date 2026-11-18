@@ -958,6 +958,28 @@ body:has(#formulario_conta) > a {
 }
 
 /* =========================================================
+   SEM CONEXÃO (offline.html, mostrada pelo service worker)
+   ========================================================= */
+body:has(#sem_conexao) {
+  max-width: 640px;
+}
+
+#sem_conexao {
+  padding-top: 32px;
+  text-align: center;
+}
+
+#sem_conexao h1 {
+  margin-bottom: var(--espaco-4);
+}
+
+#sem_conexao p {
+  font-size: 18px;
+  line-height: 28px;
+  color: var(--cor-texto-secundario);
+}
+
+/* =========================================================
    ÍCONES (exportados do Figma para public/img/icones)
    Entram como máscara: o desenho vem do SVG e a cor segue a cor
    do texto (currentColor), então o mesmo ícone serve em fundo
