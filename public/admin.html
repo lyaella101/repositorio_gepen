@@ -3,8 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <title>Area Administrativa</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#a3262c" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" href="/img/app/icone-192.png" />
+    <link rel="apple-touch-icon" href="/img/app/apple-touch-icon.png" />
+    <script src="/js/pwa.js" defer></script>
   </head>
   <body>
+    <header class="cabecalho">
+      <a class="cabecalho-marca" href="/">
+        <span class="cabecalho-logo" aria-hidden="true"></span>
+        Repositório GEPEN
+      </a>
+      <nav class="cabecalho-acoes" aria-label="Conta">
+        <a href="/senha.html">Alterar senha</a>
+        <form method="POST" action="/logout">
+          <button type="submit">Sair</button>
+        </form>
+      </nav>
+    </header>
     <p id="aviso_sessao"></p>
 
     <main id="conteudo" hidden>
@@ -85,6 +104,6 @@
       </table>
     </main>
 
-    <script src="/admin.js"></script>
+    <script src="/js/admin.js"></script>
   </body>
 </html>

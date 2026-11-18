@@ -1,0 +1,1201 @@
+/* =========================================================
+   Repositório GEPEN — estilos
+   Baseado no wireframe do Figma "GEPEN Materiais – Wireframe"
+   (página Desktop + Design system).
+
+   Este arquivo estiliza o HTML que já existe, sem mudar ids,
+   classes ou a estrutura usada pelo JavaScript.
+   ========================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap");
+
+/* ---------- Tokens (mesmos nomes das variáveis do Figma) ---------- */
+:root {
+  /* Cores de fundo */
+  --cor-fundo-pagina: #fff8ec;
+  --cor-fundo-superficie: #ffffff;
+  --cor-fundo-sutil: #f7eddd;
+  --cor-fundo-marca: #a3262c;
+  --cor-fundo-marca-sutil: #fce0de;
+  --cor-fundo-destaque-sutil: #fdefd3;
+  --cor-fundo-info: #dce7fb;
+  --cor-fundo-neutro: #eeeef0;
+  --cor-fundo-erro: #fce0de;
+
+  /* Cores de texto */
+  --cor-texto-principal: #2a0a0b;
+  --cor-texto-secundario: #6e4b45;
+  --cor-texto-sobre-marca: #ffffff;
+  --cor-texto-marca: #a3262c;
+  --cor-texto-link: #a3262c;
+  --cor-texto-destaque: #6e4100;
+  --cor-texto-erro: #8c1410;
+
+  /* Bordas */
+  --cor-borda-padrao: #2a0a0b;
+  --cor-borda-forte: #2a0a0b;
+  --cor-borda-marca: #a3262c;
+  --cor-borda-foco: #2f62d0;
+
+  /* Espaçamentos */
+  --espaco-1: 4px;
+  --espaco-2: 8px;
+  --espaco-3: 12px;
+  --espaco-4: 16px;
+  --espaco-5: 20px;
+  --espaco-6: 24px;
+  --espaco-8: 32px;
+
+  /* Raios */
+  --raio-md: 12px;
+  --raio-lg: 12px;
+  --raio-xl: 16px;
+  --raio-total: 999px;
+
+  /* Sombras "duras" (Sombra/Dura 2, 3 e 4) */
+  --sombra-2: 2px 2px 0 var(--cor-borda-padrao);
+  --sombra-3: 3px 3px 0 var(--cor-borda-padrao);
+  --sombra-4: 4px 4px 0 var(--cor-borda-padrao);
+
+  /* Fontes */
+  --fonte-titulo: "Dela Gothic One", system-ui, sans-serif;
+  --fonte-texto: "Zen Maru Gothic", system-ui, sans-serif;
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Garante que o atributo hidden (usado pelo JS) sempre esconda */
+[hidden] {
+  display: none !important;
+}
+
+html {
+  background: var(--cor-fundo-pagina);
+  overflow-x: clip; /* o cabeçalho ocupa a largura toda da janela */
+}
+
+body {
+  margin: 0 auto;
+  max-width: 1264px; /* 1200px de conteúdo + 32px de cada lado */
+  padding: 0 var(--espaco-8) 64px; /* o espaço do topo fica no cabeçalho */
+  font-family: var(--fonte-texto);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--cor-texto-principal);
+  background: var(--cor-fundo-pagina);
+}
+
+/* Largura da coluna por página */
+body:has(#formulario-login),
+body:has(#formulario_senha) {
+  max-width: 504px;
+}
+
+body:has(#formulario_card) {
+  max-width: 944px;
+}
+
+/* ---------- Tipografia ---------- */
+h1 {
+  margin: 0 0 var(--espaco-6);
+  font-family: var(--fonte-titulo); /* Título/XL */
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+/* Título com subtítulo logo abaixo: subtítulo encosta no título */
+h1:has(+ p:not(:empty)) {
+  margin-bottom: var(--espaco-1);
+}
+
+/* Subtítulo logo abaixo do título (Corpo/L) */
+h1 + p {
+  margin: 0 0 var(--espaco-6);
+  font-size: 18px;
+  line-height: 28px;
+  color: var(--cor-texto-secundario);
+}
+
+h2 {
+  margin: 0 0 var(--espaco-4);
+  font-weight: 900; /* Título/M */
+  font-size: 20px;
+  line-height: 28px;
+}
+
+h3 {
+  margin: 0 0 var(--espaco-1);
+  font-weight: 900; /* Título/S */
+  font-size: 18px;
+  line-height: 24px;
+}
+
+p {
+  margin: 0 0 var(--espaco-4);
+}
+
+a {
+  color: var(--cor-texto-link);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 2px var(--espaco-2);
+  background: var(--cor-fundo-superficie);
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 6px;
+}
+
+/* ---------- Campos (Campo / Seleção / Campo de busca) ---------- */
+label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-1);
+  font-weight: 700; /* Rótulo/M */
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+input[type="search"],
+select,
+textarea {
+  width: 100%;
+  height: 48px; /* caixa de 48px, como no Figma */
+  padding: 10px var(--espaco-4);
+  font-family: var(--fonte-texto);
+  font-weight: 500; /* Corpo/M */
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0;
+  color: var(--cor-texto-principal);
+  background: var(--cor-fundo-superficie);
+  border: 2px solid var(--cor-borda-forte);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-2);
+}
+
+textarea {
+  height: auto;
+  min-height: 96px;
+  padding: var(--espaco-3) var(--espaco-4);
+  resize: vertical;
+}
+
+select {
+  cursor: pointer;
+}
+
+::placeholder {
+  color: var(--cor-texto-secundario);
+  opacity: 1;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--cor-borda-foco);
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+  min-width: 0;
+}
+
+legend {
+  padding: 0;
+  margin-bottom: var(--espaco-2);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+}
+
+/* ---------- Chips de filtro (tags com checkbox) ---------- */
+#lista_tags,
+#filtro_tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-2);
+  font-size: 12px; /* Legenda — texto "Escolha uma categoria..." */
+  line-height: 16px;
+  color: var(--cor-texto-secundario);
+}
+
+#lista_tags label,
+#filtro_tags label {
+  position: relative;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--espaco-1);
+  height: 36px;
+  padding: var(--espaco-2) var(--espaco-3);
+  color: var(--cor-texto-principal);
+  background: var(--cor-fundo-superficie);
+  border: 2px solid var(--cor-borda-forte);
+  border-radius: var(--raio-total);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* Esconde a caixinha, mas mantém acessível pelo teclado */
+#lista_tags input[type="checkbox"],
+#filtro_tags input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+}
+
+/* Chip ativo */
+#lista_tags label:has(input:checked),
+#filtro_tags label:has(input:checked) {
+  color: var(--cor-texto-marca);
+  background: var(--cor-fundo-marca-sutil);
+  border-color: var(--cor-borda-marca);
+}
+
+#lista_tags label:has(input:checked)::after,
+#filtro_tags label:has(input:checked)::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  -webkit-mask: url("/img/icones/fechar.svg") center / contain no-repeat;
+  mask: url("/img/icones/fechar.svg") center / contain no-repeat;
+}
+
+#lista_tags label:has(input:focus-visible),
+#filtro_tags label:has(input:focus-visible) {
+  outline: 2px solid var(--cor-borda-foco);
+  outline-offset: 2px;
+}
+
+/* ---------- Botões ---------- */
+/* Padrão = Secundário */
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-2);
+  min-width: 48px;
+  height: 48px;
+  padding: var(--espaco-2) var(--espaco-3);
+  font-family: var(--fonte-texto);
+  font-weight: 700; /* Botão */
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.1px;
+  color: var(--cor-texto-principal);
+  background: var(--cor-fundo-superficie);
+  border: 2px solid var(--cor-borda-padrao);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-3);
+  cursor: pointer;
+  transition:
+    transform 0.08s,
+    box-shadow 0.08s;
+}
+
+button:hover {
+  transform: translate(1px, 1px);
+  box-shadow: var(--sombra-2);
+}
+
+button:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--cor-borda-foco);
+  outline-offset: 2px;
+}
+
+/* Primário: botão de enviar e links de ação principal */
+button[type="submit"],
+a[href="/novo_card.html"],
+#detalhes_link {
+  color: var(--cor-texto-sobre-marca);
+  background: var(--cor-fundo-marca);
+}
+
+/* "Logout" é ação de apoio, então fica secundário */
+form[action="/logout"] button {
+  color: var(--cor-texto-principal);
+  background: var(--cor-fundo-superficie);
+}
+
+/* Links com cara de botão primário */
+a[href="/novo_card.html"],
+#detalhes_link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: var(--espaco-2) var(--espaco-4);
+  font-size: 16px;
+  line-height: 24px;
+  border: 2px solid var(--cor-borda-padrao);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-3);
+}
+
+a[href="/novo_card.html"]:hover,
+#detalhes_link:hover {
+  text-decoration: none;
+  transform: translate(1px, 1px);
+  box-shadow: var(--sombra-2);
+}
+
+/* Fantasma: botões "Limpar" */
+#limpar_filtros {
+  color: var(--cor-texto-link);
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+#limpar_filtros:hover {
+  transform: none;
+  text-decoration: underline;
+}
+
+/* ---------- Mensagens / Aviso ---------- */
+#mensagem,
+#error_message,
+#aviso_sessao {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+#mensagem:empty,
+#error_message:empty,
+#aviso_sessao:empty,
+#error-message:empty {
+  display: none;
+}
+
+/* Aviso de erro do login (Aviso · Erro) */
+#error-message {
+  margin: var(--espaco-5) 0 0;
+  padding: var(--espaco-3) var(--espaco-4);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--cor-texto-erro) !important; /* o HTML tem color:red inline */
+  background: var(--cor-fundo-erro);
+  border: 2px solid var(--cor-borda-padrao);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-3);
+}
+
+/* ---------- Superfícies (cartões brancos de formulário) ---------- */
+#formulario-login,
+#formulario_senha,
+#formulario_card,
+#formulario_conta,
+#filtros {
+  background: var(--cor-fundo-superficie);
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: var(--raio-lg);
+}
+
+/* =========================================================
+   CABEÇALHO (todas as páginas)
+   Público: link "Entrar". Área administrativa: Alterar senha e Sair.
+   ========================================================= */
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-4);
+  height: 56px;
+  /* sai da coluna do body e ocupa a largura toda da janela */
+  margin: 0 calc(50% - 50vw) 40px;
+  /* conteúdo alinhado à coluna de 1200px, como no Figma */
+  padding: var(--espaco-2) max(var(--espaco-8), calc((100vw - 1200px) / 2));
+  color: var(--cor-texto-sobre-marca);
+  background: var(--cor-fundo-marca);
+  border-bottom: 3px solid var(--cor-borda-padrao);
+}
+
+body:has(#formulario-login) .cabecalho,
+body:has(#formulario_senha) .cabecalho {
+  margin-bottom: 72px;
+}
+
+.cabecalho-marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  font-weight: 900; /* Título/S */
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0;
+  white-space: nowrap;
+  color: inherit;
+}
+
+.cabecalho-marca:hover {
+  text-decoration: none;
+}
+
+/* Logo GEPEN (versão contorno). A cor do traço segue o texto do
+   cabeçalho, como pede o Figma, por isso o SVG entra como máscara. */
+.cabecalho-logo {
+  flex-shrink: 0;
+  width: 40px;
+  height: 36px;
+  background-color: currentColor;
+  -webkit-mask: url("/img/logo-gepen-contorno.svg") center / contain no-repeat;
+  mask: url("/img/logo-gepen-contorno.svg") center / contain no-repeat;
+}
+
+.cabecalho-acoes {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-1);
+}
+
+.cabecalho .cabecalho-acoes form[action="/logout"] {
+  display: contents;
+  margin: 0;
+}
+
+/* Itens do cabeçalho: texto branco, sem caixa (como "Entrar" no Figma) */
+.cabecalho-acoes a,
+.cabecalho .cabecalho-acoes button {
+  display: inline-flex;
+  align-items: center;
+  height: auto;
+  min-width: 0;
+  padding: var(--espaco-2);
+  font-family: var(--fonte-texto);
+  font-weight: 700; /* Rótulo/M */
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  color: var(--cor-texto-sobre-marca);
+  background: transparent;
+  border: none;
+  border-radius: var(--raio-md);
+  box-shadow: none;
+}
+
+.cabecalho-acoes a:hover,
+.cabecalho .cabecalho-acoes button:hover {
+  transform: none;
+  text-decoration: none;
+  box-shadow: none;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.cabecalho-acoes a:focus-visible,
+.cabecalho-acoes button:focus-visible,
+.cabecalho-marca:focus-visible {
+  outline: 2px solid var(--cor-texto-sobre-marca);
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   LOGIN (login.html) e ALTERAR SENHA (senha.html)
+   ========================================================= */
+body:has(#formulario-login) h1 {
+  font-size: 24px; /* Título/L */
+  text-align: center;
+  margin-bottom: var(--espaco-5);
+}
+
+#formulario-login,
+#formulario_senha {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-5);
+  padding: var(--espaco-8);
+}
+
+#formulario-login button,
+#formulario_senha button {
+  width: 100%;
+}
+
+body:has(#formulario_senha) > a {
+  display: inline-block;
+  margin-top: var(--espaco-5);
+}
+
+/* =========================================================
+   CATÁLOGO (index.html)
+   ========================================================= */
+
+/* Busca */
+body:has(#lista_cards) > label:has(#busca) {
+  max-width: 440px;
+  margin-bottom: var(--espaco-6);
+}
+
+/* Contagem (Corpo/M secundário) */
+#contagem {
+  margin: 0 0 var(--espaco-4);
+  color: var(--cor-texto-secundario);
+}
+
+/* Painel de filtros */
+body:has(#lista_cards) #filtros {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--espaco-5) var(--espaco-6);
+  align-items: end;
+  padding: var(--espaco-6) var(--espaco-8);
+  margin-bottom: var(--espaco-6);
+}
+
+body:has(#lista_cards) #filtros h2,
+body:has(#lista_cards) #filtros fieldset {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+/* Ordem visual: 4 listas lado a lado, depois tags, depois "Limpar" */
+body:has(#lista_cards) #filtros fieldset {
+  order: 1;
+}
+
+body:has(#lista_cards) #filtros #limpar_filtros {
+  order: 2;
+  justify-self: start;
+}
+
+/* Grade de cards */
+#lista_cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--espaco-4);
+  color: var(--cor-texto-secundario);
+}
+
+/* Card de recomendação */
+#lista_cards article {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2);
+  padding: var(--espaco-4);
+  background: var(--cor-fundo-superficie);
+  border: 2px solid var(--cor-borda-padrao);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-4);
+  cursor: pointer;
+  transition:
+    transform 0.1s,
+    box-shadow 0.1s;
+}
+
+#lista_cards article:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--cor-borda-padrao);
+}
+
+#lista_cards article h2 {
+  margin: 0;
+}
+
+/* O título é um <button>: tira a aparência de botão */
+#lista_cards article h2 button {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; /* até 2 linhas, corta com "…" */
+  overflow: hidden;
+  width: 100%;
+  height: auto;
+  min-height: 48px;
+  padding: 0;
+  font-weight: 900; /* Título/S */
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0;
+  text-align: left;
+  color: var(--cor-texto-principal);
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+#lista_cards article h2 button:hover,
+#lista_cards article h2 button:active {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Classificação: tipo · categoria · nível */
+#lista_cards article p:first-of-type {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* Tags */
+#lista_cards article p:nth-of-type(2) {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+/* "Abrir material" no rodapé do card */
+#lista_cards article a {
+  align-self: flex-end;
+  margin-top: auto;
+  padding: var(--espaco-2) 0 0 var(--espaco-2);
+}
+
+/* Modal de detalhes */
+#detalhes {
+  width: calc(100% - 32px);
+  max-width: 720px;
+  padding: var(--espaco-8) 40px;
+  color: var(--cor-texto-principal);
+  background: var(--cor-fundo-superficie);
+  border: none;
+  border-radius: var(--raio-xl);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+#detalhes::backdrop {
+  background: rgba(42, 10, 11, 0.45);
+}
+
+#fechar_detalhes {
+  position: absolute;
+  top: var(--espaco-4);
+  right: var(--espaco-4);
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 20px;
+  border: none;
+  border-radius: 20px;
+  box-shadow: none;
+}
+
+#fechar_detalhes:hover,
+#fechar_detalhes:active {
+  transform: none;
+  box-shadow: none;
+  background: var(--cor-fundo-neutro);
+}
+
+#detalhes_titulo {
+  margin: 0 48px var(--espaco-4) 0;
+  font-family: var(--fonte-titulo); /* Título/L */
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+#detalhes_classificacao,
+#detalhes_tags,
+#detalhes_idioma,
+#detalhes_data {
+  margin: 0 0 var(--espaco-2);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--cor-texto-secundario);
+}
+
+#detalhes h3 {
+  margin-top: var(--espaco-5);
+}
+
+#detalhes_descricao {
+  font-size: 18px; /* Corpo/L */
+  line-height: 28px;
+}
+
+#detalhes_area_observacoes {
+  margin: var(--espaco-5) 0;
+  padding: var(--espaco-4) var(--espaco-5);
+  background: var(--cor-fundo-destaque-sutil);
+  border-radius: var(--raio-md);
+}
+
+#detalhes_area_observacoes h3 {
+  margin-top: 0;
+  color: var(--cor-texto-destaque);
+}
+
+#detalhes_observacoes {
+  margin: 0;
+}
+
+#detalhes_link {
+  margin-top: var(--espaco-4);
+}
+
+/* Rodapé "Acesso da equipe" */
+footer {
+  margin-top: 64px;
+  padding-top: var(--espaco-6);
+  text-align: center;
+  border-top: 1px solid var(--cor-borda-padrao);
+}
+
+/* =========================================================
+   PAINEL ADMINISTRATIVO (admin.html)
+   ========================================================= */
+#conteudo > h1 {
+  margin-top: var(--espaco-8);
+}
+
+#conteudo > h1:first-child {
+  margin-top: 0;
+}
+
+/* Links de navegação lado a lado */
+#conteudo > a {
+  display: inline-block;
+  margin: 0 var(--espaco-4) var(--espaco-4) 0;
+}
+
+form[action="/logout"] {
+  display: inline-block;
+  margin-bottom: var(--espaco-4);
+}
+
+/* Barra de filtros do painel */
+body:has(#tabela_cards) #filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--espaco-4);
+  margin: var(--espaco-6) 0;
+  padding: var(--espaco-5) var(--espaco-6);
+}
+
+body:has(#tabela_cards) #filtros label {
+  flex: 1 1 160px;
+}
+
+body:has(#tabela_cards) #filtros label:has(#busca) {
+  flex: 2 1 320px;
+}
+
+/* =========================================================
+   TABELAS (admin.html e contas.html)
+   ========================================================= */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--cor-fundo-superficie);
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: var(--raio-lg);
+  overflow: hidden;
+}
+
+th {
+  padding: var(--espaco-3) var(--espaco-6);
+  font-weight: 700; /* Rótulo/S */
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.2px;
+  text-align: left;
+  color: var(--cor-texto-secundario);
+  background: var(--cor-fundo-sutil);
+  border-bottom: 1px solid var(--cor-borda-padrao);
+}
+
+td {
+  padding: var(--espaco-4) var(--espaco-6);
+  font-size: 14px; /* Corpo/S */
+  line-height: 20px;
+  color: var(--cor-texto-secundario);
+  border-bottom: 1px solid var(--cor-borda-padrao);
+  vertical-align: middle;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Primeira coluna em destaque (Corpo/M Forte) */
+td:first-child,
+td:first-child a {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--cor-texto-principal);
+}
+
+/* Ações da linha: Editar / Excluir / Desativar / Redefinir */
+td:last-child {
+  white-space: nowrap;
+}
+
+td:last-child a,
+td:last-child button {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 var(--espaco-3);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--cor-texto-principal);
+  background: var(--cor-fundo-superficie);
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: var(--raio-md);
+  box-shadow: none;
+}
+
+td:last-child a:hover,
+td:last-child button:hover {
+  transform: none;
+  text-decoration: none;
+  background: var(--cor-fundo-sutil);
+}
+
+/* Excluir e Desativar = Perigo */
+#tabela_cards td:last-child button,
+#tabela_contas td:last-child button:first-child {
+  color: var(--cor-texto-erro);
+}
+
+/* =========================================================
+   NOVA / EDITAR RECOMENDAÇÃO (novo_card.html, editar_card.html)
+   ========================================================= */
+body:has(#formulario_card) > a,
+body:has(#formulario_conta) > a {
+  display: inline-block;
+  margin-bottom: var(--espaco-6);
+}
+
+#formulario_card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espaco-5) var(--espaco-6);
+  padding: var(--espaco-6) var(--espaco-8);
+}
+
+/* Tudo ocupa a linha inteira... */
+#formulario_card > * {
+  grid-column: 1 / -1;
+}
+
+/* ...menos as listas suspensas, que ficam lado a lado */
+#formulario_card > label:has(select) {
+  grid-column: auto;
+}
+
+#formulario_card > p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--cor-texto-secundario);
+}
+
+#formulario_card button[type="submit"] {
+  justify-self: end;
+}
+
+/* =========================================================
+   GERENCIAR CONTAS (contas.html)
+   ========================================================= */
+#area_contas h2 {
+  margin-top: var(--espaco-8);
+}
+
+#area_contas h2:first-child {
+  margin-top: 0;
+}
+
+#formulario_conta {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr auto;
+  align-items: end;
+  gap: var(--espaco-4);
+  padding: var(--espaco-6);
+}
+
+#senha_criada {
+  margin-top: var(--espaco-4);
+  padding: var(--espaco-4) var(--espaco-5);
+  background: var(--cor-fundo-destaque-sutil);
+  border: 2px solid var(--cor-borda-padrao);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-3);
+}
+
+#senha_criada p:last-child {
+  margin: 0;
+  font-size: 14px;
+  color: var(--cor-texto-destaque);
+}
+
+/* =========================================================
+   SEM CONEXÃO (offline.html, mostrada pelo service worker)
+   ========================================================= */
+body:has(#sem_conexao) {
+  max-width: 640px;
+}
+
+#sem_conexao {
+  padding-top: 32px;
+  text-align: center;
+}
+
+#sem_conexao h1 {
+  margin-bottom: var(--espaco-4);
+}
+
+#sem_conexao p {
+  font-size: 18px;
+  line-height: 28px;
+  color: var(--cor-texto-secundario);
+}
+
+/* =========================================================
+   ÍCONES (exportados do Figma para public/img/icones)
+   Entram como máscara: o desenho vem do SVG e a cor segue a cor
+   do texto (currentColor), então o mesmo ícone serve em fundo
+   claro e no cabeçalho bordô.
+   ========================================================= */
+.cabecalho-acoes a::before,
+.cabecalho .cabecalho-acoes button::before,
+body:has(#formulario_card) > a::before,
+body:has(#formulario_conta) > a::before,
+body:has(#formulario_senha) > a::before,
+a[href="/novo_card.html"]::before,
+#lista_cards article a::after,
+#fechar_detalhes::before,
+#detalhes_classificacao::before,
+#detalhes_idioma::before,
+#detalhes_data::before,
+#detalhes_area_observacoes h3::before,
+#detalhes_link::before,
+#error-message::before,
+#tabela_cards td:last-child a::before,
+#tabela_cards td:last-child button::before,
+body:has(#lista_cards) #filtros h2::before {
+  content: "";
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  background-color: currentColor;
+  -webkit-mask: var(--icone) center / contain no-repeat;
+  mask: var(--icone) center / contain no-repeat;
+}
+
+/* Cabeçalho */
+.cabecalho-acoes a,
+.cabecalho .cabecalho-acoes button {
+  gap: var(--espaco-1);
+}
+.cabecalho-acoes a[href="/login.html"]::before { --icone: url("/img/icones/usuario.svg"); }
+.cabecalho-acoes a[href="/senha.html"]::before { --icone: url("/img/icones/chave.svg"); }
+.cabecalho .cabecalho-acoes button::before { --icone: url("/img/icones/sair.svg"); }
+
+/* Links "Voltar" */
+body:has(#formulario_card) > a,
+body:has(#formulario_conta) > a,
+body:has(#formulario_senha) > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+body:has(#formulario_card) > a::before,
+body:has(#formulario_conta) > a::before,
+body:has(#formulario_senha) > a::before {
+  --icone: url("/img/icones/voltar.svg");
+}
+
+/* "Criar recomendação" */
+a[href="/novo_card.html"],
+#conteudo > a[href="/novo_card.html"] {
+  display: inline-flex;
+  gap: var(--espaco-2);
+}
+a[href="/novo_card.html"]::before { --icone: url("/img/icones/mais.svg"); }
+
+/* Campo de busca: lupa à esquerda */
+input[type="search"] {
+  padding-left: 44px;
+  background: var(--cor-fundo-superficie) url("/img/icones/busca.svg") no-repeat 16px center / 20px;
+}
+
+/* Listas suspensas: seta do Figma no lugar da seta do navegador */
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 44px;
+  background: var(--cor-fundo-superficie) url("/img/icones/seta-baixo.svg") no-repeat right 16px center / 20px;
+}
+
+/* Título "Filtros" do catálogo */
+body:has(#lista_cards) #filtros h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+}
+body:has(#lista_cards) #filtros h2::before { --icone: url("/img/icones/filtro.svg"); }
+
+/* Card: "Abrir material" com ícone de link externo */
+#lista_cards article a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-1);
+}
+#lista_cards article a::after {
+  --icone: url("/img/icones/link-externo.svg");
+  width: 16px;
+  height: 16px;
+}
+
+/* Modal de detalhes */
+#fechar_detalhes {
+  font-size: 0; /* esconde o "✕" de texto; o nome "Fechar" continua para leitores de tela */
+}
+#fechar_detalhes::before {
+  --icone: url("/img/icones/fechar.svg");
+  width: 24px;
+  height: 24px;
+}
+
+#detalhes_classificacao,
+#detalhes_idioma,
+#detalhes_data {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-1);
+}
+#detalhes_classificacao::before,
+#detalhes_idioma::before,
+#detalhes_data::before {
+  width: 16px;
+  height: 16px;
+}
+#detalhes_classificacao::before { --icone: url("/img/icones/camadas.svg"); }
+#detalhes_idioma::before { --icone: url("/img/icones/globo.svg"); }
+#detalhes_data::before { --icone: url("/img/icones/calendario.svg"); }
+
+#detalhes_area_observacoes h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+}
+#detalhes_area_observacoes h3::before { --icone: url("/img/icones/nota.svg"); }
+
+#detalhes_link {
+  gap: var(--espaco-2);
+}
+#detalhes_link::before { --icone: url("/img/icones/link-externo.svg"); }
+
+/* Aviso de erro do login */
+#error-message {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-3);
+}
+#error-message::before { --icone: url("/img/icones/alerta.svg"); }
+
+/* Painel: Editar e Excluir viram botões de ícone (40px), como no Figma.
+   O texto continua no HTML, para leitores de tela. */
+#tabela_cards td:last-child a,
+#tabela_cards td:last-child button {
+  justify-content: center;
+  width: 40px;
+  min-width: 40px;
+  padding: 0;
+  font-size: 0;
+}
+#tabela_cards td:last-child a::before { --icone: url("/img/icones/lapis.svg"); }
+#tabela_cards td:last-child button::before { --icone: url("/img/icones/lixeira.svg"); }
+
+/* =========================================================
+   TELAS PEQUENAS (abaixo de 1024px / 640px)
+   ========================================================= */
+@media (max-width: 1023px) {
+  body:has(#lista_cards) #filtros {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  #formulario_conta {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    padding: 0 var(--espaco-4) 48px;
+  }
+
+  .cabecalho {
+    margin-bottom: var(--espaco-6);
+    padding-inline: var(--espaco-4);
+  }
+
+  body:has(#formulario-login) .cabecalho,
+  body:has(#formulario_senha) .cabecalho {
+    margin-bottom: var(--espaco-8);
+  }
+
+  /* Em tela estreita, o nome do repositório some e fica só o logo */
+  .cabecalho-marca {
+    font-size: 0;
+  }
+
+  h1 {
+    font-size: 26px;
+  }
+
+  #formulario_card,
+  #formulario_conta,
+  body:has(#lista_cards) #filtros {
+    grid-template-columns: 1fr;
+    padding: var(--espaco-5);
+  }
+
+  #formulario_card > label:has(select) {
+    grid-column: 1 / -1;
+  }
+
+  #formulario-login,
+  #formulario_senha {
+    padding: var(--espaco-6) var(--espaco-5);
+  }
+
+  /* Tabela rola para o lado em vez de quebrar a página */
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  #detalhes {
+    padding: var(--espaco-6) var(--espaco-5);
+  }
+}

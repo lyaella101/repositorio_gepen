@@ -137,7 +137,12 @@ entrando como professor.
 
 ```
 db/                    scripts SQL (schema, seed e dados de teste)
-public/                páginas HTML e o JavaScript que roda no navegador
+public/                páginas HTML (uma por tela)
+  css/                 estilos (style.css)
+  js/                  o JavaScript que roda no navegador, um por página
+  img/                 logo, ícones (img/icones) e ícones do aplicativo (img/app)
+  manifest.webmanifest dados do aplicativo instalável (PWA)
+  sw.js                service worker: cache para o catálogo abrir sem internet
 scripts/               ferramentas de linha de comando (criar_admin.js)
 src/
   server.js            configuração do servidor (ponto de partida)
@@ -153,11 +158,11 @@ src/
 2. **`src/server.js`**: a ordem em que o servidor monta tudo (arquivos
    estáticos, sessão, proteção das rotas `/admin` e as rotas).
 3. **Um caminho completo**, do navegador ao banco. Por exemplo, o catálogo:
-   `public/index.html` → `public/catalogo.js` (faz o `fetch("/cards")`) →
+   `public/index.html` → `public/js/catalogo.js` (faz o `fetch("/cards")`) →
    `src/routes/cards.js` (rota `GET /cards`, que faz o `SELECT`) → banco.
 
 Cada página de `public/` segue esse mesmo padrão: um `.html` com a tela e um
-`.js` com o mesmo nome, que conversa com uma rota de `src/routes/`.
+`.js` com o mesmo nome em `public/js/`, que conversa com uma rota de `src/routes/`.
 
 | Página                  | JavaScript       | Rotas usadas                                            |
 | ----------------------- | ---------------- | ------------------------------------------------------- |
@@ -168,6 +173,28 @@ Cada página de `public/` segue esse mesmo padrão: um `.html` com a tela e um
 | `editar_card.html`      | `editar_card.js` | `routes/cards.js`, `routes/opcoes.js`                   |
 | `contas.html`           | `contas.js`      | `routes/contas.js`                                      |
 | `senha.html`            | `senha.js`       | `routes/auth.js`                                        |
+
+## Aplicativo instalável (PWA)
+
+O site pode ser instalado como aplicativo (no navegador do computador ou no
+celular) e o catálogo abre mesmo sem internet, com as recomendações salvas
+na última visita.
+
+- `public/manifest.webmanifest`: nome, cores e ícones do aplicativo
+- `public/sw.js`: o service worker. Tenta sempre a rede primeiro e usa o cache
+  só quando a rede falha. A área administrativa nunca vai para o cache; sem
+  internet, ela mostra a página `offline.html`
+- `public/js/pwa.js`: registra o service worker em todas as páginas
+
+Ao mudar a lista de arquivos guardados no `sw.js`, troque a constante `VERSAO`
+(por exemplo, de `gepen-v1` para `gepen-v2`).
+
+Para testar: no Chrome, abra as ferramentas de desenvolvedor (F12) → aba
+**Application** → **Service workers** e **Manifest**. A opção **Offline**, na
+aba **Network**, simula a falta de internet. Se algo parecer desatualizado
+durante o desenvolvimento, use **Unregister** e recarregue a página.
+
+O PWA só funciona em `localhost` ou em HTTPS.
 
 ## Regras de negócio e segurança
 
