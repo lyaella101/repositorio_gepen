@@ -3,8 +3,8 @@
    Baseado no wireframe do Figma "GEPEN Materiais – Wireframe"
    (página Desktop + Design system).
 
-   Este arquivo estiliza o HTML que já existe, sem mudar ids,
-   classes ou a estrutura usada pelo JavaScript.
+   Os componentes React (web/src) usam os mesmos ids da versão
+   anterior em HTML puro, por isso os seletores continuam os mesmos.
    ========================================================= */
 
 @import url("https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap");
@@ -340,9 +340,15 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+  transform: none;
+}
+
 /* Primário: botão de enviar e links de ação principal */
 button[type="submit"],
-a[href="/novo_card.html"],
+a[href="/painel/nova"],
 #detalhes_link {
   color: var(--cor-texto-sobre-marca);
   background: var(--cor-fundo-marca);
@@ -355,7 +361,7 @@ form[action="/logout"] button {
 }
 
 /* Links com cara de botão primário */
-a[href="/novo_card.html"],
+a[href="/painel/nova"],
 #detalhes_link {
   display: inline-flex;
   align-items: center;
@@ -369,7 +375,7 @@ a[href="/novo_card.html"],
   box-shadow: var(--sombra-3);
 }
 
-a[href="/novo_card.html"]:hover,
+a[href="/painel/nova"]:hover,
 #detalhes_link:hover {
   text-decoration: none;
   transform: translate(1px, 1px);
@@ -526,7 +532,7 @@ body:has(#formulario_senha) .cabecalho {
 }
 
 /* =========================================================
-   LOGIN (login.html) e ALTERAR SENHA (senha.html)
+   LOGIN (/entrar) e ALTERAR SENHA (/senha)
    ========================================================= */
 body:has(#formulario-login) h1 {
   font-size: 24px; /* Título/L */
@@ -547,17 +553,17 @@ body:has(#formulario-login) h1 {
   width: 100%;
 }
 
-body:has(#formulario_senha) > a {
+body:has(#formulario_senha) #root > a {
   display: inline-block;
   margin-top: var(--espaco-5);
 }
 
 /* =========================================================
-   CATÁLOGO (index.html)
+   CATÁLOGO (/)
    ========================================================= */
 
 /* Busca */
-body:has(#lista_cards) > label:has(#busca) {
+body:has(#lista_cards) #root > label:has(#busca) {
   max-width: 440px;
   margin-bottom: var(--espaco-6);
 }
@@ -768,7 +774,7 @@ footer {
 }
 
 /* =========================================================
-   PAINEL ADMINISTRATIVO (admin.html)
+   PAINEL ADMINISTRATIVO (/painel)
    ========================================================= */
 #conteudo > h1 {
   margin-top: var(--espaco-8);
@@ -808,7 +814,7 @@ body:has(#tabela_cards) #filtros label:has(#busca) {
 }
 
 /* =========================================================
-   TABELAS (admin.html e contas.html)
+   TABELAS (/painel e /contas)
    ========================================================= */
 table {
   width: 100%;
@@ -888,10 +894,10 @@ td:last-child button:hover {
 }
 
 /* =========================================================
-   NOVA / EDITAR RECOMENDAÇÃO (novo_card.html, editar_card.html)
+   NOVA / EDITAR RECOMENDAÇÃO (/painel/nova, /painel/editar/:id)
    ========================================================= */
-body:has(#formulario_card) > a,
-body:has(#formulario_conta) > a {
+body:has(#formulario_card) #root > a,
+body:has(#formulario_conta) #root > a {
   display: inline-block;
   margin-bottom: var(--espaco-6);
 }
@@ -924,7 +930,7 @@ body:has(#formulario_conta) > a {
 }
 
 /* =========================================================
-   GERENCIAR CONTAS (contas.html)
+   GERENCIAR CONTAS (/contas)
    ========================================================= */
 #area_contas h2 {
   margin-top: var(--espaco-8);
@@ -958,7 +964,7 @@ body:has(#formulario_conta) > a {
 }
 
 /* =========================================================
-   SEM CONEXÃO (offline.html, mostrada pelo service worker)
+   PÁGINA NÃO ENCONTRADA
    ========================================================= */
 body:has(#sem_conexao) {
   max-width: 640px;
@@ -987,10 +993,10 @@ body:has(#sem_conexao) {
    ========================================================= */
 .cabecalho-acoes a::before,
 .cabecalho .cabecalho-acoes button::before,
-body:has(#formulario_card) > a::before,
-body:has(#formulario_conta) > a::before,
-body:has(#formulario_senha) > a::before,
-a[href="/novo_card.html"]::before,
+body:has(#formulario_card) #root > a::before,
+body:has(#formulario_conta) #root > a::before,
+body:has(#formulario_senha) #root > a::before,
+a[href="/painel/nova"]::before,
 #lista_cards article a::after,
 #fechar_detalhes::before,
 #detalhes_classificacao::before,
@@ -1016,31 +1022,31 @@ body:has(#lista_cards) #filtros h2::before {
 .cabecalho .cabecalho-acoes button {
   gap: var(--espaco-1);
 }
-.cabecalho-acoes a[href="/login.html"]::before { --icone: url("/img/icones/usuario.svg"); }
-.cabecalho-acoes a[href="/senha.html"]::before { --icone: url("/img/icones/chave.svg"); }
+.cabecalho-acoes a[href="/entrar"]::before { --icone: url("/img/icones/usuario.svg"); }
+.cabecalho-acoes a[href="/senha"]::before { --icone: url("/img/icones/chave.svg"); }
 .cabecalho .cabecalho-acoes button::before { --icone: url("/img/icones/sair.svg"); }
 
 /* Links "Voltar" */
-body:has(#formulario_card) > a,
-body:has(#formulario_conta) > a,
-body:has(#formulario_senha) > a {
+body:has(#formulario_card) #root > a,
+body:has(#formulario_conta) #root > a,
+body:has(#formulario_senha) #root > a {
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
-body:has(#formulario_card) > a::before,
-body:has(#formulario_conta) > a::before,
-body:has(#formulario_senha) > a::before {
+body:has(#formulario_card) #root > a::before,
+body:has(#formulario_conta) #root > a::before,
+body:has(#formulario_senha) #root > a::before {
   --icone: url("/img/icones/voltar.svg");
 }
 
 /* "Criar recomendação" */
-a[href="/novo_card.html"],
-#conteudo > a[href="/novo_card.html"] {
+a[href="/painel/nova"],
+#conteudo > a[href="/painel/nova"] {
   display: inline-flex;
   gap: var(--espaco-2);
 }
-a[href="/novo_card.html"]::before { --icone: url("/img/icones/mais.svg"); }
+a[href="/painel/nova"]::before { --icone: url("/img/icones/mais.svg"); }
 
 /* Campo de busca: lupa à esquerda */
 input[type="search"] {

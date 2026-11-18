@@ -30,7 +30,7 @@ Projeto desenvolvido para a disciplina Engenharia de Software.
 
 - Node.js e Express
 - PostgreSQL (extensões `unaccent` e `pgcrypto`)
-- HTML, CSS e JavaScript, sem frameworks no front-end
+- Front-end em React 19, com Vite (pasta `web/`)
 - Bibliotecas: `pg`, `bcryptjs`, `express-session`, `connect-pg-simple`,
   `express-rate-limit`, `dotenv`
 
@@ -105,9 +105,12 @@ npm run dev
 O terminal deve mostrar que o servidor está rodando. Deixe-o aberto enquanto
 usa o site; para parar, aperte `Ctrl + C`.
 
+Em desenvolvimento, o Express carrega o Vite junto: ao salvar um arquivo de
+`web/`, a página se atualiza sozinha.
+
 - Catálogo: http://localhost:3000
 - Login: link **Acesso da equipe**, no rodapé do catálogo
-  (ou direto em http://localhost:3000/login.html)
+  (ou direto em http://localhost:3000/entrar)
 - Conta de teste: `professor.teste@ufc.br` / `SenhaTeste2026`
 
 Para criar outras contas de teste pelo terminal:
@@ -130,6 +133,7 @@ entrando como professor.
 | A página não mostra uma mudança feita no código             | Cache do navegador: aperte `Ctrl + F5`                                  |
 | `EADDRINUSE` na porta 3000                                  | O servidor já está aberto em outro terminal                             |
 | `Cannot use import statement` ou erros estranhos ao iniciar | Node.js antigo: confira com `node --version`                            |
+| `Cannot find package 'vite'` ou `'react'`                   | Faltou rodar `npm install` depois de baixar esta versão                 |
 
 ## Como navegar pelo código
 
@@ -137,42 +141,54 @@ entrando como professor.
 
 ```
 db/                    scripts SQL (schema, seed e dados de teste)
-public/                páginas HTML (uma por tela)
-  css/                 estilos (style.css)
-  js/                  o JavaScript que roda no navegador, um por página
-  img/                 logo, ícones (img/icones) e ícones do aplicativo (img/app)
-  manifest.webmanifest dados do aplicativo instalável (PWA)
-  sw.js                service worker: cache para o catálogo abrir sem internet
 scripts/               ferramentas de linha de comando (criar_admin.js)
-src/
+src/                   servidor (Express)
   server.js            configuração do servidor (ponto de partida)
   db.js                conexão com o banco
   middlewares/         requireAuth (está logado?) e requireProfessor (é professor?)
   routes/              rotas: auth, opcoes, cards e contas
   utils/               funções de validação
+web/                   front-end (React)
+  index.html           página única onde o React é montado
+  public/              arquivos copiados como estão: img/, manifest e sw.js
+  src/
+    main.jsx           ponto de partida do React
+    App.jsx            lista de endereços (rotas) e a tela de cada um
+    roteador.jsx       troca de tela sem recarregar a página
+    api.js             funções para conversar com o servidor
+    util.js            funções pequenas (datas, busca sem acento...)
+    style.css          estilos do site inteiro
+    paginas/           uma tela por arquivo
+    componentes/       peças reaproveitadas (cabeçalho, formulário, tags...)
+    hooks/             lógica reaproveitada (sessão, listas do servidor...)
+vite.config.js         configuração do Vite
+dist/                  versão pronta para publicar (gerada por `npm run build`)
 ```
 
 ### Por onde começar a ler
 
 1. **`db/01_schema.sql`**: as tabelas e como se ligam. Todo o resto depende delas.
-2. **`src/server.js`**: a ordem em que o servidor monta tudo (arquivos
-   estáticos, sessão, proteção das rotas `/admin` e as rotas).
-3. **Um caminho completo**, do navegador ao banco. Por exemplo, o catálogo:
-   `public/index.html` → `public/js/catalogo.js` (faz o `fetch("/cards")`) →
+2. **`src/server.js`**: a ordem em que o servidor monta tudo (sessão, proteção
+   das rotas `/admin`, as rotas e, por último, o React).
+3. **`web/src/App.jsx`**: os endereços do site e qual tela cada um abre.
+4. **Um caminho completo**, do navegador ao banco. Por exemplo, o catálogo:
+   `web/src/paginas/Catalogo.jsx` (faz `buscarLista("/cards")`) →
    `src/routes/cards.js` (rota `GET /cards`, que faz o `SELECT`) → banco.
 
-Cada página de `public/` segue esse mesmo padrão: um `.html` com a tela e um
-`.js` com o mesmo nome em `public/js/`, que conversa com uma rota de `src/routes/`.
+Cada tela em `web/src/paginas/` conversa com as rotas de `src/routes/`:
 
-| Página                  | JavaScript       | Rotas usadas                                            |
-| ----------------------- | ---------------- | ------------------------------------------------------- |
-| `index.html` (catálogo) | `catalogo.js`    | `routes/cards.js`, `routes/opcoes.js`                   |
-| `login.html`            | `login.js`       | `routes/auth.js`                                        |
-| `admin.html` (painel)   | `admin.js`       | `routes/cards.js`, `routes/opcoes.js`, `routes/auth.js` |
-| `novo_card.html`        | `novo_card.js`   | `routes/cards.js`, `routes/opcoes.js`                   |
-| `editar_card.html`      | `editar_card.js` | `routes/cards.js`, `routes/opcoes.js`                   |
-| `contas.html`           | `contas.js`      | `routes/contas.js`                                      |
-| `senha.html`            | `senha.js`       | `routes/auth.js`                                        |
+| Endereço             | Tela                     | Rotas usadas                                            |
+| -------------------- | ------------------------ | ------------------------------------------------------- |
+| `/` (catálogo)       | `Catalogo.jsx`           | `routes/cards.js`, `routes/opcoes.js`                   |
+| `/entrar`            | `Login.jsx`              | `routes/auth.js`                                        |
+| `/painel`            | `Painel.jsx`             | `routes/cards.js`, `routes/opcoes.js`, `routes/auth.js` |
+| `/painel/nova`       | `NovaRecomendacao.jsx`   | `routes/cards.js`, `routes/opcoes.js`                   |
+| `/painel/editar/:id` | `EditarRecomendacao.jsx` | `routes/cards.js`, `routes/opcoes.js`                   |
+| `/contas`            | `Contas.jsx`             | `routes/contas.js`                                      |
+| `/senha`             | `Senha.jsx`              | `routes/auth.js`                                        |
+
+Os endereços da versão antiga (`/login.html`, `/admin.html`...) redirecionam
+para os novos.
 
 ## Aplicativo instalável (PWA)
 
@@ -180,20 +196,19 @@ O site pode ser instalado como aplicativo (no navegador do computador ou no
 celular) e o catálogo abre mesmo sem internet, com as recomendações salvas
 na última visita.
 
-- `public/manifest.webmanifest`: nome, cores e ícones do aplicativo
-- `public/sw.js`: o service worker. Tenta sempre a rede primeiro e usa o cache
-  só quando a rede falha. A área administrativa nunca vai para o cache; sem
-  internet, ela mostra a página `offline.html`
-- `public/js/pwa.js`: registra o service worker em todas as páginas
+- `web/public/manifest.webmanifest`: nome, cores e ícones do aplicativo
+- `web/public/sw.js`: o service worker. Tenta sempre a rede primeiro e usa o
+  cache só quando a rede falha. As rotas `/admin`, login e logout nunca vão
+  para o cache
+- O registro do service worker fica em `web/src/main.jsx` e só acontece na
+  versão publicada, para não guardar arquivos antigos durante o desenvolvimento
 
-Ao mudar a lista de arquivos guardados no `sw.js`, troque a constante `VERSAO`
-(por exemplo, de `gepen-v1` para `gepen-v2`).
+Para testar o PWA no computador, gere a versão publicada (`npm run build` e
+depois `npm start`). No Chrome, abra as ferramentas de desenvolvedor (F12) →
+aba **Application** → **Service workers** e **Manifest**. A opção **Offline**,
+na aba **Network**, simula a falta de internet.
 
-Para testar: no Chrome, abra as ferramentas de desenvolvedor (F12) → aba
-**Application** → **Service workers** e **Manifest**. A opção **Offline**, na
-aba **Network**, simula a falta de internet. Se algo parecer desatualizado
-durante o desenvolvimento, use **Unregister** e recarregue a página.
-
+Ao mudar a lista de arquivos guardados no `sw.js`, troque a constante `VERSAO`.
 O PWA só funciona em `localhost` ou em HTTPS.
 
 ## Regras de negócio e segurança
@@ -255,6 +270,8 @@ O PWA só funciona em `localhost` ou em HTTPS.
 | Filtros com seleção única (select) | O catálogo tem poucas recomendações                       |
 | Busca e filtros no navegador       | O catálogo é pequeno; os filtros ficam instantâneos       |
 | Limite de tentativas na memória    | Mais simples, sem tabela nova                             |
+| React com Vite no front-end        | Telas em componentes reaproveitáveis; Vite roda no Express em desenvolvimento |
+| Roteador próprio, sem biblioteca   | Poucas telas; pode ser trocado por React Router se crescer |
 
 ## Banco de dados
 
@@ -292,16 +309,16 @@ sessões).
 - A disponibilidade dos links depende dos sites de origem
 - A troca da senha provisória no primeiro acesso é uma orientação, e não é
   obrigatória pelo sistema
-- As páginas administrativas ficam em `public/`: sem login, o HTML chega a ser
-  entregue, mas fica escondido e os dados não carregam, porque as rotas
+- As telas administrativas fazem parte do mesmo aplicativo React: sem login,
+  o código chega ao navegador, mas os dados não carregam, porque as rotas
   `/admin` exigem sessão
-- O site ainda não tem estilo visual (CSS)
 - A busca e os filtros rodam no navegador; se o catálogo passar de alguns
   milhares de recomendações, a filtragem deve ir para o servidor
 
 ## Publicação
 
-Ajustes necessários antes de publicar:
+Para publicar, gere o front-end com `npm run build` (cria a pasta `dist/`) e
+inicie o servidor com `npm start`. Ajustes necessários antes de publicar:
 
 1. No `server.js`, ativar `app.set("trust proxy", 1)`
 2. No cookie da sessão, usar `secure: true` (exige HTTPS)
@@ -320,4 +337,3 @@ Ajustes necessários antes de publicar:
 - Reativação de contas desativadas
 - Criação automática da conta do professor na primeira inicialização do servidor
 - Servir as páginas administrativas somente com login, pelo servidor
-- Criação do design das páginas por CSS
