@@ -15,15 +15,25 @@ export default function NovaRecomendacao() {
   async function salvar(dados) {
     setMensagem(null);
     try {
-      const { ok, status, dados: resposta } = await requisitar("/admin/cards", { metodo: "POST", corpo: dados });
+      const {
+        ok,
+        status,
+        dados: resposta,
+      } = await requisitar("/admin/cards", { metodo: "POST", corpo: dados });
       if (status === 401) return false;
       if (ok) {
         setMensagem({ tipo: "sucesso", texto: resposta.message });
-        return true; // limpa o formulário
+        return true;
       }
-      setMensagem({ tipo: "erro", texto: resposta?.error ?? "Não foi possível salvar." });
+      setMensagem({
+        tipo: "erro",
+        texto: resposta?.error ?? "Não foi possível salvar.",
+      });
     } catch (e) {
-      setMensagem({ tipo: "erro", texto: e instanceof SemConexao ? e.message : "Erro ao salvar." });
+      setMensagem({
+        tipo: "erro",
+        texto: e instanceof SemConexao ? e.message : "Erro ao salvar.",
+      });
     }
     return false;
   }
@@ -35,11 +45,12 @@ export default function NovaRecomendacao() {
       <h1>Nova recomendação</h1>
       <p>* campos obrigatórios</p>
 
+      <Mensagem mensagem={mensagem} />
+
       <FormularioRecomendacao
         aoSalvar={salvar}
         aoErro={(texto) => setMensagem({ tipo: "erro", texto })}
       />
-      <Mensagem mensagem={mensagem} />
     </>
   );
 }

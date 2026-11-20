@@ -1,11 +1,24 @@
-// Mensagem de retorno (sucesso em verde, erro em vermelho), lida por leitores de tela.
-// "mensagem" é { texto, tipo: "sucesso" | "erro" | "" }.
-const CORES = { sucesso: "green", erro: "red" };
+import { useEffect, useRef } from "react";
 
 export default function Mensagem({ id = "mensagem", mensagem }) {
+  const ref = useRef(null);
+  const texto = mensagem?.texto ?? "";
+  const tipo = mensagem?.tipo ?? "";
+
+  useEffect(() => {
+    if (texto && tipo) {
+      ref.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [texto, tipo]);
+
   return (
-    <p id={id} aria-live="polite" style={{ color: CORES[mensagem?.tipo] }}>
-      {mensagem?.texto ?? ""}
+    <p
+      id={id}
+      ref={ref}
+      aria-live="polite"
+      className={tipo ? `aviso aviso-${tipo}` : undefined}
+    >
+      {texto}
     </p>
   );
 }
