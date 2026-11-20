@@ -800,15 +800,17 @@ body:has(#lista_cards) #filtros #limpar_filtros {
 }
 
 /* Categoria, com ícone */
+/* Categoria: bloco com fundo da marca e ícone */
 #lista_cards .card-categoria {
-  display: flex;
+  display: inline-flex;
+  align-self: flex-start;
   align-items: center;
   gap: var(--espaco-1);
   margin: 0;
   font-weight: 700;
   font-size: 14px;
   line-height: 20px;
-  color: var(--cor-texto-marca);
+  color: var(--cor-texto-secundario);
 }
 
 #lista_cards .card-categoria::before {
@@ -823,9 +825,28 @@ body:has(#lista_cards) #filtros #limpar_filtros {
 
 /* Tags */
 #lista_cards .card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-1);
   margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#lista_cards .card-tags li {
+  padding: 2px var(--espaco-2);
+  font-weight: 500;
   font-size: 12px;
   line-height: 16px;
+  color: var(--cor-texto-secundario);
+  background: var(--cor-fundo-sutil);
+  border-radius: 6px;
+}
+
+#lista_cards .card-tags li::before {
+  content: "#";
+  margin-right: 2px;
+  opacity: 0.6;
 }
 
 /* "Abrir material" no rodapé do card */
