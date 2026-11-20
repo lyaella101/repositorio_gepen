@@ -6,9 +6,21 @@ import Opcoes from "../componentes/Opcoes.jsx";
 import { useOpcoes, useTagsDaCategoria } from "../hooks/useOpcoes.js";
 import { useTitulo } from "../hooks/useTitulo.js";
 import { Link } from "../roteador.jsx";
-import { classificacao, formatarData, IDIOMAS, nomesDasTags, semAcentos } from "../util.js";
+import {
+  classificacao,
+  formatarData,
+  IDIOMAS,
+  nomesDasTags,
+  semAcentos,
+} from "../util.js";
 
-const FILTROS_VAZIOS = { tipoId: "", categoriaId: "", nivelId: "", idioma: "", tags: [] };
+const FILTROS_VAZIOS = {
+  tipoId: "",
+  categoriaId: "",
+  nivelId: "",
+  idioma: "",
+  tags: [],
+};
 
 export default function Catalogo() {
   useTitulo("Repositório de recomendações da GEPEN");
@@ -18,6 +30,7 @@ export default function Catalogo() {
   const [busca, setBusca] = useState("");
   const [filtros, setFiltros] = useState(FILTROS_VAZIOS);
   const [selecionado, setSelecionado] = useState(null);
+  const [filtrosAbertos, setFiltrosAbertos] = useState(false);
   const tagsDaCategoria = useTagsDaCategoria(filtros.categoriaId);
 
   useEffect(() => {
@@ -31,9 +44,11 @@ export default function Catalogo() {
     const termo = semAcentos(busca.trim());
     return cards.filter(
       (card) =>
-        (semAcentos(card.titulo).includes(termo) || semAcentos(card.descricao).includes(termo)) &&
+        (semAcentos(card.titulo).includes(termo) ||
+          semAcentos(card.descricao).includes(termo)) &&
         (!filtros.tipoId || card.tipo_id === Number(filtros.tipoId)) &&
-        (!filtros.categoriaId || card.categoria_id === Number(filtros.categoriaId)) &&
+        (!filtros.categoriaId ||
+          card.categoria_id === Number(filtros.categoriaId)) &&
         (!filtros.nivelId || card.nivel_id === Number(filtros.nivelId)) &&
         (!filtros.idioma || card.idioma === filtros.idioma) &&
         filtros.tags.every((id) => card.tags.some((tag) => tag.id === id)),
@@ -43,7 +58,9 @@ export default function Catalogo() {
   function alterarFiltro(evento) {
     const { name, value } = evento.target;
     setFiltros((atual) =>
-      name === "categoriaId" ? { ...atual, categoriaId: value, tags: [] } : { ...atual, [name]: value },
+      name === "categoriaId"
+        ? { ...atual, categoriaId: value, tags: [] }
+        : { ...atual, [name]: value },
     );
   }
 
@@ -56,14 +73,26 @@ export default function Catalogo() {
   if (erro) lista = "Não foi possível carregar o catálogo. Tente novamente.";
   else if (!cards) lista = "Carregando...";
   else if (visiveis.length === 0)
-    lista = cards.length === 0 ? "Nenhuma recomendação cadastrada ainda." : "Nenhuma recomendação encontrada.";
-  else lista = visiveis.map((card) => <CardRecomendacao key={card.id} card={card} aoAbrir={setSelecionado} />);
+    lista =
+      cards.length === 0
+        ? "Nenhuma recomendação cadastrada ainda."
+        : "Nenhuma recomendação encontrada.";
+  else
+    lista = visiveis.map((card) => (
+      <CardRecomendacao key={card.id} card={card} aoAbrir={setSelecionado} />
+    ));
 
   const contagem =
     cards && visiveis.length > 0
       ? `${visiveis.length} ${visiveis.length === 1 ? "recomendação" : "recomendações"} (Mais recentes)`
       : "";
-
+  const filtrosAtivos =
+    [
+      filtros.tipoId,
+      filtros.categoriaId,
+      filtros.nivelId,
+      filtros.idioma,
+    ].filter(Boolean).length + filtros.tags.length;
   return (
     <>
       <Cabecalho />
@@ -84,57 +113,89 @@ export default function Catalogo() {
       <p id="contagem">{contagem}</p>
 
       <form id="filtros" onSubmit={(e) => e.preventDefault()}>
-        <h2>Filtros</h2>
+        <h2>
+          <button
+            type="button"
+            id="botao_filtros"
+            aria-expanded={filtrosAbertos}
+            onClick={() => setFiltrosAbertos((aberto) => !aberto)}
+          >
+            Filtros{filtrosAtivos > 0 && ` (${filtrosAtivos})`}
+          </button>
+        </h2>
 
-        <label>
-          Tipo de material
-          <select name="tipoId" id="filtro_tipo" value={filtros.tipoId} onChange={alterarFiltro}>
-            <option value="">Todos</option>
-            <Opcoes itens={tipos} />
-          </select>
-        </label>
+        {filtrosAbertos && (
+          <>
+            <label>
+              Tipo de material
+              <select
+                name="tipoId"
+                id="filtro_tipo"
+                value={filtros.tipoId}
+                onChange={alterarFiltro}
+              >
+                <option value="">Todos</option>
+                <Opcoes itens={tipos} />
+              </select>
+            </label>
 
-        <label>
-          Categoria
-          <select name="categoriaId" id="filtro_categoria" value={filtros.categoriaId} onChange={alterarFiltro}>
-            <option value="">Todas</option>
-            <Opcoes itens={categorias} />
-          </select>
-        </label>
+            <label>
+              Categoria
+              <select
+                name="categoriaId"
+                id="filtro_categoria"
+                value={filtros.categoriaId}
+                onChange={alterarFiltro}
+              >
+                <option value="">Todas</option>
+                <Opcoes itens={categorias} />
+              </select>
+            </label>
 
-        <fieldset>
-          <legend>Tags</legend>
-          <ListaTags
-            id="filtro_tags"
-            {...tagsDaCategoria}
-            marcadas={filtros.tags}
-            aoMudar={(tags) => setFiltros((atual) => ({ ...atual, tags }))}
-            semCategoria={!filtros.categoriaId}
-            avisoSemCategoria="Escolha uma categoria para ver as tags dela."
-          />
-        </fieldset>
+            <fieldset>
+              <legend>Tags</legend>
+              <ListaTags
+                id="filtro_tags"
+                {...tagsDaCategoria}
+                marcadas={filtros.tags}
+                aoMudar={(tags) => setFiltros((atual) => ({ ...atual, tags }))}
+                semCategoria={!filtros.categoriaId}
+                avisoSemCategoria="Escolha uma categoria para ver as tags dela."
+              />
+            </fieldset>
 
-        <label>
-          Nível de aprendizado
-          <select name="nivelId" id="filtro_nivel" value={filtros.nivelId} onChange={alterarFiltro}>
-            <option value="">Todos</option>
-            <Opcoes itens={niveis} />
-          </select>
-        </label>
+            <label>
+              Nível de aprendizado
+              <select
+                name="nivelId"
+                id="filtro_nivel"
+                value={filtros.nivelId}
+                onChange={alterarFiltro}
+              >
+                <option value="">Todos</option>
+                <Opcoes itens={niveis} />
+              </select>
+            </label>
 
-        <label>
-          Idioma do material
-          <select name="idioma" value={filtros.idioma} onChange={alterarFiltro}>
-            <option value="">Todos</option>
-            {IDIOMAS.map((idioma) => (
-              <option key={idioma}>{idioma}</option>
-            ))}
-          </select>
-        </label>
+            <label>
+              Idioma do material
+              <select
+                name="idioma"
+                value={filtros.idioma}
+                onChange={alterarFiltro}
+              >
+                <option value="">Todos</option>
+                {IDIOMAS.map((idioma) => (
+                  <option key={idioma}>{idioma}</option>
+                ))}
+              </select>
+            </label>
 
-        <button type="button" id="limpar_filtros" onClick={limpar}>
-          Limpar filtros
-        </button>
+            <button type="button" id="limpar_filtros" onClick={limpar}>
+              Limpar filtros
+            </button>
+          </>
+        )}
       </form>
 
       <div id="lista_cards">{lista}</div>
@@ -156,7 +217,12 @@ function CardRecomendacao({ card, aoAbrir }) {
       </h2>
       <p>{classificacao(card)}</p>
       <p>Tags: {nomesDasTags(card)}</p>
-      <a href={card.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+      <a
+        href={card.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(e) => e.stopPropagation()}
+      >
         Abrir material
       </a>
     </article>
@@ -183,7 +249,12 @@ function Detalhes({ card, aoFechar }) {
     >
       {card && (
         <>
-          <button type="button" id="fechar_detalhes" aria-label="Fechar" onClick={() => janela.current.close()}>
+          <button
+            type="button"
+            id="fechar_detalhes"
+            aria-label="Fechar"
+            onClick={() => janela.current.close()}
+          >
             ✕
           </button>
 
@@ -204,7 +275,12 @@ function Detalhes({ card, aoFechar }) {
           <p id="detalhes_idioma">Idioma: {card.idioma}</p>
           <p id="detalhes_data">Publicado em {formatarData(card.data_envio)}</p>
 
-          <a id="detalhes_link" href={card.url} target="_blank" rel="noopener noreferrer">
+          <a
+            id="detalhes_link"
+            href={card.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Abrir material
           </a>
         </>

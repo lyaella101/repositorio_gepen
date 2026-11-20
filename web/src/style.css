@@ -473,6 +473,34 @@ a[href="/painel/nova"]:hover,
   border-radius: var(--raio-lg);
 }
 
+#botao_filtros {
+  flex: 1;
+  justify-content: space-between;
+  height: auto;
+  min-width: 0;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+#botao_filtros::after {
+  content: "";
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  background-color: currentColor;
+  -webkit-mask: url("/img/icones/seta-baixo.svg") center / contain no-repeat;
+  mask: url("/img/icones/seta-baixo.svg") center / contain no-repeat;
+  transition: transform 0.2s;
+}
+
+#botao_filtros[aria-expanded="true"]::after {
+  transform: rotate(180deg);
+}
 /* =========================================================
    CABEÇALHO (todas as páginas)
    Público: link "Entrar". Área administrativa: Alterar senha e Sair.
