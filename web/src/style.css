@@ -501,19 +501,14 @@ a[href="/painel/nova"]:hover,
 #botao_filtros[aria-expanded="true"]::after {
   transform: rotate(180deg);
 }
-/* =========================================================
-   CABEÇALHO (todas as páginas)
-   Público: link "Entrar". Área administrativa: Alterar senha e Sair.
-   ========================================================= */
+
 .cabecalho {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--espaco-4);
   height: 56px;
-  /* sai da coluna do body e ocupa a largura toda da janela */
   margin: 0 calc(50% - 50vw) 40px;
-  /* conteúdo alinhado à coluna de 1200px, como no Figma */
   padding: var(--espaco-2) max(var(--espaco-8), calc((100vw - 1200px) / 2));
   color: var(--cor-texto-sobre-marca);
   background: var(--cor-fundo-marca);
@@ -529,7 +524,7 @@ body:has(#formulario_senha) .cabecalho {
   display: inline-flex;
   align-items: center;
   gap: var(--espaco-2);
-  font-weight: 900; /* Título/S */
+  font-weight: 900;
   font-size: 18px;
   line-height: 24px;
   letter-spacing: 0;
@@ -541,8 +536,6 @@ body:has(#formulario_senha) .cabecalho {
   text-decoration: none;
 }
 
-/* Logo GEPEN (versão contorno). A cor do traço segue o texto do
-   cabeçalho, como pede o Figma, por isso o SVG entra como máscara. */
 .cabecalho-logo {
   flex-shrink: 0;
   width: 40px;
@@ -563,7 +556,6 @@ body:has(#formulario_senha) .cabecalho {
   margin: 0;
 }
 
-/* Itens do cabeçalho: texto branco, sem caixa (como "Entrar" no Figma) */
 .cabecalho-acoes a,
 .cabecalho .cabecalho-acoes button {
   display: inline-flex;
@@ -572,7 +564,7 @@ body:has(#formulario_senha) .cabecalho {
   min-width: 0;
   padding: var(--espaco-2);
   font-family: var(--fonte-texto);
-  font-weight: 700; /* Rótulo/M */
+  font-weight: 700;
   font-size: 14px;
   line-height: 20px;
   letter-spacing: 0.1px;
@@ -598,11 +590,9 @@ body:has(#formulario_senha) .cabecalho {
   outline-offset: 2px;
 }
 
-/* =========================================================
-   LOGIN (/entrar) e ALTERAR SENHA (/senha)
-   ========================================================= */
+/* LOGIN (/entrar) e ALTERAR SENHA (/senha)*/
 body:has(#formulario-login) h1 {
-  font-size: 24px; /* Título/L */
+  font-size: 24px;
   text-align: center;
   margin-bottom: var(--espaco-5);
 }
@@ -696,6 +686,88 @@ body:has(#lista_cards) #filtros #limpar_filtros {
   box-shadow: 6px 6px 0 var(--cor-borda-padrao);
 }
 
+/* Etiquetas do card: tipo e nível */
+#lista_cards .card-etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-2);
+}
+
+#lista_cards .etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espaco-1);
+  padding: 2px var(--espaco-2);
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--etiqueta-texto, var(--cor-texto-principal));
+  background: var(--etiqueta-fundo, var(--cor-fundo-neutro));
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: var(--raio-total);
+}
+
+#lista_cards .etiqueta-nivel::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  background-color: currentColor;
+  -webkit-mask: url("/img/icones/nivel.svg") center / contain no-repeat;
+  mask: url("/img/icones/nivel.svg") center / contain no-repeat;
+}
+
+#lista_cards [data-tipo="Livro"],
+#lista_cards [data-tipo="Apostila"],
+#lista_cards [data-tipo="Artigo"] {
+  --etiqueta-fundo: #ece3fd; /* leitura: roxo */
+  --etiqueta-texto: #4b2a8a;
+}
+
+#lista_cards [data-tipo="Vídeo"],
+#lista_cards [data-tipo="Áudio"] {
+  --etiqueta-fundo: #fbdcec; /* audiovisual: rosa */
+  --etiqueta-texto: #7a1d4f;
+}
+
+#lista_cards [data-tipo="Site"],
+#lista_cards [data-tipo="Aplicativo"],
+#lista_cards [data-tipo="Jogo"] {
+  --etiqueta-fundo: #dce7fb; /* digital: azul */
+  --etiqueta-texto: #1d3f8a;
+}
+
+#lista_cards [data-tipo="Curso"],
+#lista_cards [data-tipo="Exercício"] {
+  --etiqueta-fundo: #d6f1ee; /* prática: verde-água */
+  --etiqueta-texto: #0f5650;
+}
+
+/* Níveis: do mais fácil (N5, verde) ao mais difícil (N1, vermelho) */
+#lista_cards [data-nivel="N5"] {
+  --etiqueta-fundo: #dff3e2;
+  --etiqueta-texto: #1d5b2c;
+}
+
+#lista_cards [data-nivel="N4"] {
+  --etiqueta-fundo: #ebf3cc;
+  --etiqueta-texto: #4a5a0f;
+}
+
+#lista_cards [data-nivel="N3"] {
+  --etiqueta-fundo: #fdefd3;
+  --etiqueta-texto: #6e4100;
+}
+
+#lista_cards [data-nivel="N2"] {
+  --etiqueta-fundo: #ffe0c7;
+  --etiqueta-texto: #7a3300;
+}
+
+#lista_cards [data-nivel="N1"] {
+  --etiqueta-fundo: #fcd6d6;
+  --etiqueta-texto: #8c1410;
+}
+
 #lista_cards article h2 {
   margin: 0;
 }
@@ -727,15 +799,30 @@ body:has(#lista_cards) #filtros #limpar_filtros {
   box-shadow: none;
 }
 
-/* Classificação: tipo · categoria · nível */
-#lista_cards article p:first-of-type {
+/* Categoria, com ícone */
+#lista_cards .card-categoria {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-1);
   margin: 0;
+  font-weight: 700;
   font-size: 14px;
   line-height: 20px;
+  color: var(--cor-texto-marca);
+}
+
+#lista_cards .card-categoria::before {
+  content: "";
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  -webkit-mask: url("/img/icones/camadas.svg") center / contain no-repeat;
+  mask: url("/img/icones/camadas.svg") center / contain no-repeat;
 }
 
 /* Tags */
-#lista_cards article p:nth-of-type(2) {
+#lista_cards .card-tags {
   margin: 0;
   font-size: 12px;
   line-height: 16px;

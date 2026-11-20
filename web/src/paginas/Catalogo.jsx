@@ -212,11 +212,22 @@ export default function Catalogo() {
 function CardRecomendacao({ card, aoAbrir }) {
   return (
     <article onClick={() => aoAbrir(card)}>
+      <div className="card-etiquetas">
+        <span className="etiqueta etiqueta-tipo" data-tipo={card.tipo}>
+          {card.tipo}
+        </span>
+        <span className="etiqueta etiqueta-nivel" data-nivel={card.nivel}>
+          {card.nivel}
+        </span>
+      </div>
+
       <h2>
         <button type="button">{card.titulo}</button>
       </h2>
-      <p>{classificacao(card)}</p>
-      <p>Tags: {nomesDasTags(card)}</p>
+
+      <p className="card-categoria">{card.categoria}</p>
+      <p className="card-tags">Tags: {nomesDasTags(card)}</p>
+
       <a
         href={card.url}
         target="_blank"
