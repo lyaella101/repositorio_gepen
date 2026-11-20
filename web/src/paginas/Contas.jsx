@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { requisitar, SemConexao } from "../api.js";
 import Cabecalho from "../componentes/Cabecalho.jsx";
 import Mensagem from "../componentes/Mensagem.jsx";
+import Confirmacao from "../componentes/Confirmacao.jsx";
 import { useTitulo } from "../hooks/useTitulo.js";
 import { Link } from "../roteador.jsx";
 
@@ -10,7 +11,10 @@ const NOVA_CONTA = { nome: "", email: "", papel: "bolsista" };
 export default function Contas() {
   useTitulo("Gerenciar contas");
   const [contas, setContas] = useState(null);
-  const [mensagem, setMensagem] = useState({ tipo: "", texto: "Carregando..." });
+  const [mensagem, setMensagem] = useState({
+    tipo: "",
+    texto: "Carregando...",
+  });
   const [formulario, setFormulario] = useState(NOVA_CONTA);
   const [senhaCriada, setSenhaCriada] = useState(null); // { nome, senha }
 
@@ -19,14 +23,20 @@ export default function Contas() {
       const { ok, status, dados } = await requisitar("/admin/contas");
       if (status === 401) return;
       if (status === 403) {
-        setMensagem({ tipo: "erro", texto: "Acesso permitido apenas ao professor." });
+        setMensagem({
+          tipo: "erro",
+          texto: "Acesso permitido apenas ao professor.",
+        });
         return;
       }
       if (!ok) throw new Error();
       setContas(dados);
       setMensagem((atual) => (atual?.texto === "Carregando..." ? null : atual));
     } catch {
-      setMensagem({ tipo: "erro", texto: "Não foi possível carregar as contas." });
+      setMensagem({
+        tipo: "erro",
+        texto: "Não foi possível carregar as contas.",
+      });
     }
   }, []);
 
@@ -35,7 +45,13 @@ export default function Contas() {
   }, [carregar]);
 
   function erroDeConexao(e) {
-    setMensagem({ tipo: "erro", texto: e instanceof SemConexao ? e.message : "Algo deu errado. Tente novamente." });
+    setMensagem({
+      tipo: "erro",
+      texto:
+        e instanceof SemConexao
+          ? e.message
+          : "Algo deu errado. Tente novamente.",
+    });
   }
 
   async function criar(evento) {
@@ -54,19 +70,30 @@ export default function Contas() {
         setFormulario(NOVA_CONTA);
         await carregar();
       } else {
-        setMensagem({ tipo: "erro", texto: dados?.error ?? "Não foi possível criar a conta." });
+        setMensagem({
+          tipo: "erro",
+          texto: dados?.error ?? "Não foi possível criar a conta.",
+        });
       }
     } catch (e) {
       erroDeConexao(e);
     }
   }
 
+  const [acao, setAcao] = useState(null);
+  const [processando, setProcessando] = useState(false);
+
   async function desativar(conta) {
-    if (!window.confirm(`Desativar a conta de ${conta.nome}? Ela não conseguirá mais entrar.`)) return;
     try {
-      const { ok, status, dados } = await requisitar(`/admin/contas/${conta.id}/desativar`, { metodo: "PATCH" });
+      const { ok, status, dados } = await requisitar(
+        `/admin/contas/${conta.id}/desativar`,
+        { metodo: "PATCH" },
+      );
       if (status === 401) return;
-      setMensagem({ tipo: ok ? "sucesso" : "erro", texto: ok ? dados.message : dados?.error });
+      setMensagem({
+        tipo: ok ? "sucesso" : "erro",
+        texto: ok ? dados.message : dados?.error,
+      });
       if (ok) await carregar();
     } catch (e) {
       erroDeConexao(e);
@@ -74,11 +101,13 @@ export default function Contas() {
   }
 
   async function redefinirSenha(conta) {
-    if (!window.confirm(`Redefinir a senha de ${conta.nome}? A senha atual deixará de funcionar.`)) return;
     try {
-      const { ok, status, dados } = await requisitar(`/admin/contas/${conta.id}/redefinir_senha`, {
-        metodo: "PATCH",
-      });
+      const { ok, status, dados } = await requisitar(
+        `/admin/contas/${conta.id}/redefinir_senha`,
+        {
+          metodo: "PATCH",
+        },
+      );
       if (status === 401) return;
       if (ok) {
         setSenhaCriada({ nome: conta.nome, senha: dados.senhaProvisoria });
@@ -88,6 +117,20 @@ export default function Contas() {
       }
     } catch (e) {
       erroDeConexao(e);
+    }
+  }
+
+  async function confirmarAcao() {
+    setProcessando(true);
+    try {
+      if (acao.tipo === "desativar") {
+        await desativar(acao.conta);
+      } else {
+        await redefinirSenha(acao.conta);
+      }
+    } finally {
+      setProcessando(false);
+      setAcao(null);
     }
   }
 
@@ -109,15 +152,34 @@ export default function Contas() {
           <form id="formulario_conta" onSubmit={criar}>
             <label>
               Nome *
-              <input type="text" name="nome" required maxLength={100} value={formulario.nome} onChange={alterar} />
+              <input
+                type="text"
+                name="nome"
+                required
+                maxLength={100}
+                value={formulario.nome}
+                onChange={alterar}
+              />
             </label>
             <label>
               E-mail *
-              <input type="email" name="email" required maxLength={255} value={formulario.email} onChange={alterar} />
+              <input
+                type="email"
+                name="email"
+                required
+                maxLength={255}
+                value={formulario.email}
+                onChange={alterar}
+              />
             </label>
             <label>
               Papel *
-              <select name="papel" required value={formulario.papel} onChange={alterar}>
+              <select
+                name="papel"
+                required
+                value={formulario.papel}
+                onChange={alterar}
+              >
                 <option value="bolsista">Bolsista</option>
                 <option value="professor">Professor</option>
               </select>
@@ -128,9 +190,13 @@ export default function Contas() {
           {senhaCriada && (
             <div id="senha_criada">
               <p>
-                <strong>Senha provisória de {senhaCriada.nome}:</strong> <code>{senhaCriada.senha}</code>
+                <strong>Senha provisória de {senhaCriada.nome}:</strong>{" "}
+                <code>{senhaCriada.senha}</code>
               </p>
-              <p>Anote e entregue por um canal seguro. Ela não será mostrada de novo.</p>
+              <p>
+                Anote e entregue por um canal seguro. Ela não será mostrada de
+                novo.
+              </p>
             </div>
           )}
 
@@ -150,15 +216,23 @@ export default function Contas() {
                 <tr key={conta.id}>
                   <td>{conta.nome}</td>
                   <td>{conta.email}</td>
-                  <td>{conta.papel === "professor" ? "Professor" : "Bolsista"}</td>
+                  <td>
+                    {conta.papel === "professor" ? "Professor" : "Bolsista"}
+                  </td>
                   <td>{conta.ativo ? "Ativa" : "Desativada"}</td>
                   <td>
                     {conta.ativo && (
                       <>
-                        <button type="button" onClick={() => desativar(conta)}>
+                        <button
+                          type="button"
+                          onClick={() => setAcao({ tipo: "desativar", conta })}
+                        >
                           Desativar
                         </button>{" "}
-                        <button type="button" onClick={() => redefinirSenha(conta)}>
+                        <button
+                          type="button"
+                          onClick={() => setAcao({ tipo: "redefinir", conta })}
+                        >
                           Redefinir senha
                         </button>
                       </>
@@ -170,6 +244,34 @@ export default function Contas() {
           </table>
         </section>
       )}
+      <Confirmacao
+        aberta={acao !== null}
+        titulo={
+          acao?.tipo === "desativar" ? "Desativar conta?" : "Redefinir senha?"
+        }
+        textoConfirmar={
+          acao?.tipo === "desativar" ? "Desativar" : "Redefinir senha"
+        }
+        textoProcessando={
+          acao?.tipo === "desativar" ? "Desativando..." : "Redefinindo..."
+        }
+        processando={processando}
+        aoConfirmar={confirmarAcao}
+        aoCancelar={() => setAcao(null)}
+      >
+        {acao?.tipo === "desativar" ? (
+          <p>
+            A conta de <b>{acao.conta.nome}</b> será desativada. Essa pessoa não
+            conseguirá mais entrar, e as sessões abertas dela serão encerradas.
+          </p>
+        ) : (
+          <p>
+            Uma nova senha provisória será criada para <b>{acao?.conta.nome}</b>
+            . A senha atual deixará de funcionar, e as sessões abertas serão
+            encerradas.
+          </p>
+        )}
+      </Confirmacao>
     </>
   );
 }

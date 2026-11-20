@@ -12,7 +12,9 @@ export default function EditarRecomendacao({ id }) {
   const idValido = Number.isInteger(cardId) && cardId > 0;
   const [inicial, setInicial] = useState(null);
   const [mensagem, setMensagem] = useState(
-    idValido ? { tipo: "", texto: "Carregando..." } : { tipo: "erro", texto: "Recomendação inválida." },
+    idValido
+      ? { tipo: "", texto: "Carregando..." }
+      : { tipo: "erro", texto: "Recomendação inválida." },
   );
 
   useEffect(() => {
@@ -21,7 +23,10 @@ export default function EditarRecomendacao({ id }) {
       .then(({ ok, status, dados }) => {
         if (status === 401) return;
         if (status === 404) {
-          setMensagem({ tipo: "erro", texto: "Esta recomendação não existe ou já foi excluída." });
+          setMensagem({
+            tipo: "erro",
+            texto: "Esta recomendação não existe ou já foi excluída.",
+          });
           return;
         }
         if (!ok) throw new Error();
@@ -38,13 +43,22 @@ export default function EditarRecomendacao({ id }) {
         });
         setMensagem(null);
       })
-      .catch(() => setMensagem({ tipo: "erro", texto: "Não foi possível carregar a recomendação." }));
+      .catch(() =>
+        setMensagem({
+          tipo: "erro",
+          texto: "Não foi possível carregar a recomendação.",
+        }),
+      );
   }, [cardId, idValido]);
 
   async function salvar(dados) {
     setMensagem(null);
     try {
-      const { ok, status, dados: resposta } = await requisitar(`/admin/cards/${cardId}`, {
+      const {
+        ok,
+        status,
+        dados: resposta,
+      } = await requisitar(`/admin/cards/${cardId}`, {
         metodo: "PUT",
         corpo: dados,
       });
@@ -52,10 +66,16 @@ export default function EditarRecomendacao({ id }) {
       setMensagem(
         ok
           ? { tipo: "sucesso", texto: resposta.message }
-          : { tipo: "erro", texto: resposta?.error ?? "Não foi possível salvar." },
+          : {
+              tipo: "erro",
+              texto: resposta?.error ?? "Não foi possível salvar.",
+            },
       );
     } catch (e) {
-      setMensagem({ tipo: "erro", texto: e instanceof SemConexao ? e.message : "Erro ao salvar." });
+      setMensagem({
+        tipo: "erro",
+        texto: e instanceof SemConexao ? e.message : "Erro ao salvar.",
+      });
     }
     return false; // na edição, o formulário continua preenchido
   }
@@ -67,6 +87,8 @@ export default function EditarRecomendacao({ id }) {
       <h1>Editar recomendação</h1>
       <p>* campos obrigatórios</p>
 
+      <Mensagem mensagem={mensagem} />
+
       {inicial && (
         <FormularioRecomendacao
           inicial={inicial}
@@ -74,7 +96,6 @@ export default function EditarRecomendacao({ id }) {
           aoErro={(texto) => setMensagem({ tipo: "erro", texto })}
         />
       )}
-      <Mensagem mensagem={mensagem} />
     </>
   );
 }
