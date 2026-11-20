@@ -226,7 +226,13 @@ function CardRecomendacao({ card, aoAbrir }) {
       </h2>
 
       <p className="card-categoria">{card.categoria}</p>
-      <p className="card-tags">Tags: {nomesDasTags(card)}</p>
+      {card.tags.length > 0 && (
+        <ul className="card-tags" aria-label="Tags">
+          {card.tags.map((tag) => (
+            <li key={tag.id}>{tag.nome}</li>
+          ))}
+        </ul>
+      )}
 
       <a
         href={card.url}
