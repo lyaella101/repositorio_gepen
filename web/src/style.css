@@ -21,6 +21,8 @@
   --cor-fundo-info: #dce7fb;
   --cor-fundo-neutro: #eeeef0;
   --cor-fundo-erro: #fce0de;
+  --cor-fundo-sucesso: #e2f3e4;
+  --cor-texto-sucesso: #1d5b2c;
 
   /* Cores de texto */
   --cor-texto-principal: #2a0a0b;
@@ -395,12 +397,49 @@ a[href="/painel/nova"]:hover,
   text-decoration: underline;
 }
 
-/* ---------- Mensagens / Aviso ---------- */
-#mensagem,
 #error_message,
 #aviso_sessao {
   font-size: 14px;
   line-height: 20px;
+}
+.aviso {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  margin: 0 0 var(--espaco-6);
+  padding: var(--espaco-3) var(--espaco-4);
+  border: 2px solid var(--cor-borda-padrao);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-3);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.aviso::before {
+  content: "";
+  flex: none;
+  width: 20px;
+  height: 20px;
+  background: center / contain no-repeat;
+}
+
+.aviso-sucesso {
+  background: var(--cor-fundo-sucesso);
+  color: var(--cor-texto-sucesso);
+}
+
+.aviso-sucesso::before {
+  background-image: url("/img/icones/sucesso.svg");
+}
+
+.aviso-erro {
+  background: var(--cor-fundo-erro);
+  color: var(--cor-texto-erro);
+}
+
+.aviso-erro::before {
+  background-image: url("/img/icones/alerta.svg");
 }
 
 #mensagem:empty,
@@ -416,7 +455,7 @@ a[href="/painel/nova"]:hover,
   padding: var(--espaco-3) var(--espaco-4);
   font-size: 14px;
   line-height: 20px;
-  color: var(--cor-texto-erro) !important; /* o HTML tem color:red inline */
+  color: var(--cor-texto-erro) !important;
   background: var(--cor-fundo-erro);
   border: 2px solid var(--cor-borda-padrao);
   border-radius: var(--raio-md);
@@ -765,6 +804,35 @@ body:has(#lista_cards) #filtros #limpar_filtros {
   margin-top: var(--espaco-4);
 }
 
+/* Janela de confirmação (Modal · Confirmação) */
+.confirmacao {
+  width: calc(100% - 32px);
+  max-width: 480px;
+  padding: var(--espaco-8);
+  color: var(--cor-texto-principal);
+  background: var(--cor-fundo-superficie);
+  border: 2px solid var(--cor-borda-padrao);
+  border-radius: var(--raio-xl);
+  box-shadow: var(--sombra-4);
+}
+
+.confirmacao::backdrop {
+  background: rgba(42, 10, 11, 0.45);
+}
+
+.confirmacao-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--espaco-3);
+  margin-top: var(--espaco-6);
+}
+
+/* Botão de ação destrutiva */
+.botao-perigo {
+  color: var(--cor-texto-sobre-marca);
+  background: var(--cor-texto-erro);
+}
+
 /* Rodapé "Acesso da equipe" */
 footer {
   margin-top: 64px;
@@ -1022,9 +1090,15 @@ body:has(#lista_cards) #filtros h2::before {
 .cabecalho .cabecalho-acoes button {
   gap: var(--espaco-1);
 }
-.cabecalho-acoes a[href="/entrar"]::before { --icone: url("/img/icones/usuario.svg"); }
-.cabecalho-acoes a[href="/senha"]::before { --icone: url("/img/icones/chave.svg"); }
-.cabecalho .cabecalho-acoes button::before { --icone: url("/img/icones/sair.svg"); }
+.cabecalho-acoes a[href="/entrar"]::before {
+  --icone: url("/img/icones/usuario.svg");
+}
+.cabecalho-acoes a[href="/senha"]::before {
+  --icone: url("/img/icones/chave.svg");
+}
+.cabecalho .cabecalho-acoes button::before {
+  --icone: url("/img/icones/sair.svg");
+}
 
 /* Links "Voltar" */
 body:has(#formulario_card) #root > a,
@@ -1046,12 +1120,15 @@ a[href="/painel/nova"],
   display: inline-flex;
   gap: var(--espaco-2);
 }
-a[href="/painel/nova"]::before { --icone: url("/img/icones/mais.svg"); }
+a[href="/painel/nova"]::before {
+  --icone: url("/img/icones/mais.svg");
+}
 
 /* Campo de busca: lupa à esquerda */
 input[type="search"] {
   padding-left: 44px;
-  background: var(--cor-fundo-superficie) url("/img/icones/busca.svg") no-repeat 16px center / 20px;
+  background: var(--cor-fundo-superficie) url("/img/icones/busca.svg") no-repeat
+    16px center / 20px;
 }
 
 /* Listas suspensas: seta do Figma no lugar da seta do navegador */
@@ -1059,7 +1136,8 @@ select {
   -webkit-appearance: none;
   appearance: none;
   padding-right: 44px;
-  background: var(--cor-fundo-superficie) url("/img/icones/seta-baixo.svg") no-repeat right 16px center / 20px;
+  background: var(--cor-fundo-superficie) url("/img/icones/seta-baixo.svg")
+    no-repeat right 16px center / 20px;
 }
 
 /* Título "Filtros" do catálogo */
@@ -1068,7 +1146,9 @@ body:has(#lista_cards) #filtros h2 {
   align-items: center;
   gap: var(--espaco-2);
 }
-body:has(#lista_cards) #filtros h2::before { --icone: url("/img/icones/filtro.svg"); }
+body:has(#lista_cards) #filtros h2::before {
+  --icone: url("/img/icones/filtro.svg");
+}
 
 /* Card: "Abrir material" com ícone de link externo */
 #lista_cards article a {
@@ -1105,21 +1185,31 @@ body:has(#lista_cards) #filtros h2::before { --icone: url("/img/icones/filtro.sv
   width: 16px;
   height: 16px;
 }
-#detalhes_classificacao::before { --icone: url("/img/icones/camadas.svg"); }
-#detalhes_idioma::before { --icone: url("/img/icones/globo.svg"); }
-#detalhes_data::before { --icone: url("/img/icones/calendario.svg"); }
+#detalhes_classificacao::before {
+  --icone: url("/img/icones/camadas.svg");
+}
+#detalhes_idioma::before {
+  --icone: url("/img/icones/globo.svg");
+}
+#detalhes_data::before {
+  --icone: url("/img/icones/calendario.svg");
+}
 
 #detalhes_area_observacoes h3 {
   display: flex;
   align-items: center;
   gap: var(--espaco-2);
 }
-#detalhes_area_observacoes h3::before { --icone: url("/img/icones/nota.svg"); }
+#detalhes_area_observacoes h3::before {
+  --icone: url("/img/icones/nota.svg");
+}
 
 #detalhes_link {
   gap: var(--espaco-2);
 }
-#detalhes_link::before { --icone: url("/img/icones/link-externo.svg"); }
+#detalhes_link::before {
+  --icone: url("/img/icones/link-externo.svg");
+}
 
 /* Aviso de erro do login */
 #error-message {
@@ -1127,7 +1217,9 @@ body:has(#lista_cards) #filtros h2::before { --icone: url("/img/icones/filtro.sv
   align-items: center;
   gap: var(--espaco-3);
 }
-#error-message::before { --icone: url("/img/icones/alerta.svg"); }
+#error-message::before {
+  --icone: url("/img/icones/alerta.svg");
+}
 
 /* Painel: Editar e Excluir viram botões de ícone (40px), como no Figma.
    O texto continua no HTML, para leitores de tela. */
@@ -1139,8 +1231,12 @@ body:has(#lista_cards) #filtros h2::before { --icone: url("/img/icones/filtro.sv
   padding: 0;
   font-size: 0;
 }
-#tabela_cards td:last-child a::before { --icone: url("/img/icones/lapis.svg"); }
-#tabela_cards td:last-child button::before { --icone: url("/img/icones/lixeira.svg"); }
+#tabela_cards td:last-child a::before {
+  --icone: url("/img/icones/lapis.svg");
+}
+#tabela_cards td:last-child button::before {
+  --icone: url("/img/icones/lixeira.svg");
+}
 
 /* =========================================================
    TELAS PEQUENAS (abaixo de 1024px / 640px)
