@@ -93,6 +93,21 @@ export default function Catalogo() {
       filtros.nivelId,
       filtros.idioma,
     ].filter(Boolean).length + filtros.tags.length;
+
+  // Resumo dos filtros escolhidos, na ordem:
+  // material > categoria > nível > idioma > tags. Os que estão em "Todos" ficam de fora.
+  const nomeDe = (itens, id) =>
+    itens.find((item) => String(item.id) === String(id))?.nome;
+  const resumoFiltros = [
+    nomeDe(tipos, filtros.tipoId),
+    nomeDe(categorias, filtros.categoriaId),
+    nomeDe(niveis, filtros.nivelId),
+    filtros.idioma,
+    ...filtros.tags.map((id) => nomeDe(tagsDaCategoria.tags, id)),
+  ]
+    .filter(Boolean)
+    .join(" - ");
+
   return (
     <>
       <Cabecalho />
@@ -197,6 +212,8 @@ export default function Catalogo() {
           </>
         )}
       </form>
+
+      {resumoFiltros && <p id="resumo_filtros">{resumoFiltros}</p>}
 
       <div id="lista_cards">{lista}</div>
 
